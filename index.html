@@ -796,8 +796,8 @@ const BPMN_DIAGRAMS = {
 
   nep:{
     label:"NEP",
-    title:"Network Evolution Plan — Process Flow",
-    caption:"The strategic layer: sets 3-year ambition and priorities with each market's CNO/CEO. Runs May/June through beginning of October.",
+    title:"Strategic Planning – Network Evolution Plan (NEP) | Process Flow",
+    caption:"Reproduced from the official NEP process-flow deck. The strategic layer: sets 3-year ambition and priorities with each market's CNO/CEO, from the May/June kick-off through beginning-of-October approval.",
     io:{
       inputs:[
         "Strategic pre-guidance KPIs (June) and full tech priorities (September)",
@@ -814,24 +814,25 @@ const BPMN_DIAGRAMS = {
     },
     lanes:["NW Director & NW Leadership Team","CNO","Engagem. Executives","Demand & Planning","Market CEO","NW Fin. BPR & local controller","NW Architect","NW Funct. Budget SPOC"],
     nodes:[
-      { id:"s", lane:6, col:0, type:"start", label:"May/June", detail:{ owner:"—", desc:"The annual NEP cycle opens." } },
-      { id:"n1", lane:6, col:1, type:"task", label:"1. Provide strategic pre-guidance", detail:{ owner:"NW Architect", desc:"Strategic pre-guidance for the Network is issued as the reference point the whole cycle builds from." } },
-      { id:"n2", lane:3, col:2, type:"task", label:"2. Collect demand", detail:{ owner:"Demand & Planning", desc:"Traffic, service, business priorities and financial guidelines are collected from markets and business functions, VF NW functions, and VF Digital and IT." } },
-      { id:"n3a", lane:1, col:3, type:"task", label:"3. Market Analysis & Forecasting", detail:{ owner:"CNO", desc:"Coverage, capabilities and performance of competitors are analysed." } },
-      { id:"n3b", lane:2, col:3, type:"task", label:"3. Scenarios Definition", detail:{ owner:"Engagem. Executives", desc:"Scenarios are defined based on VF Strategy, Local Priorities and Group guidance — the Access Rollout Plan such as technologies, volumes, refarming strategy, capacity evolution and the Engineering evolution plan." } },
-      { id:"n4a", lane:3, col:4, type:"task", label:"4. High-Level Cost evaluation", detail:{ owner:"Demand & Planning (parallel: NW Fin. BPR, NW Funct. Budget SPOC)", desc:"High-level cost evaluation to implement the plan — unitary costs for Access rollout, Innovation, and BAU projects analysis. Runs in parallel across three lanes." } },
-      { id:"n4b", lane:5, col:4, type:"task", label:"4. High-Level Cost evaluation", detail:{ owner:"NW Fin. BPR & local controller", desc:"Same high-level cost evaluation, carried out in parallel by NW Finance." } },
-      { id:"n4c", lane:7, col:4, type:"task", label:"4. High-Level Cost evaluation", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same high-level cost evaluation, carried out in parallel by the NW Function Budget SPOC." } },
-      { id:"n5a", lane:3, col:5, type:"task", label:"5. Review vs business priorities", detail:{ owner:"Demand & Planning (parallel: NW Fin. BPR, NW Funct. Budget SPOC)", desc:"Review NEP against business priorities & VF Strategy, in parallel across three lanes, before governance review." } },
-      { id:"n5b", lane:5, col:5, type:"task", label:"5. Review vs business priorities", detail:{ owner:"NW Fin. BPR & local controller", desc:"Same review, carried out in parallel by NW Finance." } },
-      { id:"n5c", lane:7, col:5, type:"task", label:"5. Review vs business priorities", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same review, carried out in parallel by the NW Function Budget SPOC." } },
-      { id:"n6", lane:0, col:6, type:"gov", label:"6. Review & agree the NEP", detail:{ owner:"NW Director & NW Leadership Team", desc:"Leadership reviews the NEP for strategic fit and affordability." } },
-      { id:"gw1", lane:0, col:7, type:"gate", label:"Agreed?", detail:{ owner:"NW Director & Leadership / CNO", desc:"Exclusive gateway: “NEP agreed at LT and CNO level?” If not agreed, it loops back to step 5 (review vs business priorities); if agreed, it proceeds to market presentation." } },
-      { id:"n7", lane:4, col:8, type:"task", label:"7. Present with Local ExCo", detail:{ owner:"Market CEO", desc:"The agreed NEP is presented to the market's Local Executive Committee." } },
-      { id:"n8", lane:4, col:9, type:"task", label:"8. Identify challenges & actions", detail:{ owner:"Market CEO", desc:"Any challenges raised by the Local ExCo are logged with proposed actions." } },
-      { id:"n9", lane:0, col:10, type:"task", label:"9. Inform NW Leadership & Director", detail:{ owner:"NW Director & NW Leadership Team", desc:"NW Leadership and the NW Director are informed of the outcome." } },
-      { id:"n10", lane:4, col:11, type:"mile", label:"10. Approve rollout strategy", detail:{ owner:"Market CEO", desc:"Beginning of October — the market CEO approves the Network Rollout Strategy and the high-level 3-year plan per market. This becomes the baseline input into the DB/LRP diagram." } },
-      { id:"e", lane:0, col:12, type:"end", label:"11. Feedback to Architecture", detail:{ owner:"NW Director & NW Leadership Team", desc:"Feedback on alignment on Strategy is provided to the NW Architecture Team, closing the NEP cycle." } },
+      { id:"s", lane:6, col:0, type:"start", kicker:"Network NW Milestone", label:"May/June", detail:{ owner:"Network NW Milestone", desc:"The annual NEP cycle opens." } },
+      { id:"n1", lane:6, col:1, type:"task", label:"1. Provide Strategic pre-guidance", detail:{ owner:"NW Architect", desc:"Provide Strategic pre-guidance for Network — the reference point the whole cycle builds from." } },
+      { id:"n2", lane:3, col:2, type:"task", label:"2. Collect demand", detail:{ owner:"Demand & Planning", desc:"Collect demand (traffic, service, business priorities, financial guidelines, etc.) from markets and Business functions, VF NW functions, VF Digital and IT." } },
+      { id:"n3a", lane:1, col:3, type:"task", label:"3. Market Analysis and Forecasting", detail:{ owner:"CNO", desc:"Market Analysis and Forecasting — coverage, capabilities and performance of competitors." } },
+      { id:"n3b", lane:2, col:3, type:"task", label:"3. Scenarios Definition", detail:{ owner:"Engagem. Executives", desc:"Scenarios Definition based on VF Strategy, Local Priorities and Group guidance (Access Rollout Plan such as technologies, volumes, refarming strategy, capacity evolution, Engineering evolution plan)." } },
+      { id:"n4a", lane:3, col:4, type:"task", label:"4. High Level Cost evaluation", detail:{ owner:"Demand & Planning (parallel: NW Fin. BPR, NW Funct. Budget SPOC)", desc:"High Level Cost evaluation to implement the plan (Unitary costs for Access rollout, Innovation, BAU projects analysis). Runs in parallel across three lanes." } },
+      { id:"n4b", lane:5, col:4, type:"task", label:"4. High Level Cost evaluation", detail:{ owner:"NW Fin. BPR & local controller", desc:"Same High Level Cost evaluation, carried out in parallel by NW Finance — flagged in the source process map as a Market Finance touchpoint." } },
+      { id:"n4c", lane:7, col:4, type:"task", label:"4. High Level Cost evaluation", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same High Level Cost evaluation, carried out in parallel by the NW Function Budget SPOC." } },
+      { id:"n5a", lane:3, col:5, type:"task", label:"5. Review NEP vs business priorities", detail:{ owner:"Demand & Planning (parallel: NW Fin. BPR, NW Funct. Budget SPOC)", desc:"Review NEP against business priorities & VF Strategy, in parallel across three lanes, before governance review." } },
+      { id:"n5b", lane:5, col:5, type:"task", label:"5. Review NEP vs business priorities", detail:{ owner:"NW Fin. BPR & local controller", desc:"Same review, carried out in parallel by NW Finance." } },
+      { id:"n5c", lane:7, col:5, type:"task", label:"5. Review NEP vs business priorities", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same review, carried out in parallel by the NW Function Budget SPOC." } },
+      { id:"n6", lane:0, col:6, type:"gov", label:"6. Review and agree on the NEP", detail:{ owner:"NW Director & NW Leadership Team", desc:"Governance Meeting: leadership reviews and agrees the NEP for strategic fit and affordability." } },
+      { id:"gw1", lane:0, col:7, type:"gate", label:"Agreed?", detail:{ owner:"NW Director & Leadership / CNO", desc:"Exclusive gateway: “NEP agreed at LT and CNO level?” If not agreed, it loops back to step 5 (Review NEP against business priorities); if agreed, it proceeds toward market presentation." } },
+      { id:"milOct", lane:6, col:8, type:"start", kicker:"Network NW Milestone", label:"Beg October", detail:{ owner:"Network NW Milestone", desc:"Beginning of October — the market-presentation phase of the NEP cycle opens." } },
+      { id:"n7", lane:4, col:9, type:"gov", label:"7. NEP presented with Local ExCo", detail:{ owner:"Market CEO", desc:"Governance Meeting: the agreed NEP is presented to the market's Local Executive Committee." } },
+      { id:"n8", lane:4, col:10, type:"task", label:"8. Identification of challenges and actions", detail:{ owner:"Market CEO", desc:"Any challenges raised by the Local ExCo are logged with proposed actions." } },
+      { id:"n9", lane:0, col:11, type:"task", label:"9. Inform NW Leadership and NW Director", detail:{ owner:"NW Director & NW Leadership Team", desc:"NW Leadership and the NW Director are informed of the outcome." } },
+      { id:"n10", lane:4, col:12, type:"mile", label:"10. Approve NW Rollout Strategy and High Level 3Yrs plan per market", detail:{ owner:"Market CEO", desc:"The market CEO approves the Network Rollout Strategy and the high-level 3-year plan per market. This becomes the baseline input into the DB/LRP diagram." } },
+      { id:"e", lane:0, col:13, type:"end", label:"11. Provide feedback to NW Architecture Team", detail:{ owner:"NW Director & NW Leadership Team", desc:"Provide feedback on alignment on Strategy to the NW Architecture Team, closing the NEP cycle." } },
     ],
     edges:[
       {from:"s",to:"n1"},{from:"n1",to:"n2"},{from:"n2",to:"n3a"},{from:"n2",to:"n3b"},
@@ -840,7 +841,8 @@ const BPMN_DIAGRAMS = {
       {from:"n5a",to:"n6"},{from:"n5b",to:"n6"},{from:"n5c",to:"n6"},
       {from:"n6",to:"gw1"},
       {from:"gw1",to:"n5a",label:"No",loop:true},
-      {from:"gw1",to:"n7",label:"Yes"},
+      {from:"gw1",to:"milOct",label:"Yes"},
+      {from:"milOct",to:"n7"},
       {from:"n7",to:"n8"},{from:"n8",to:"n9"},{from:"n9",to:"n10"},{from:"n10",to:"e"},
     ]
   },
@@ -1471,7 +1473,7 @@ function fitBpmnCanvas(){
 function openModal(node, diagram){
   const backdrop = document.getElementById('modalBackdrop');
   const kickerMap = { start:"Start event", end:"End event", mile:"Milestone", gov:"Governance meeting", gate:"Decision gateway", task:"Task" };
-  document.getElementById('modalKicker').textContent = (diagram ? diagram.label+' · ' : '') + (kickerMap[node.type]||'Step');
+  document.getElementById('modalKicker').textContent = (diagram ? diagram.label+' · ' : '') + (node.kicker || kickerMap[node.type] || 'Step');
   document.getElementById('modalTitle').textContent = node.label;
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-field"><div class="fk">Owner / actor</div><div class="fv">${node.detail.owner}</div></div>

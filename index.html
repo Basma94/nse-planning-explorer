@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NSE Planning Explorer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#f7f7f8;
+  --surface:#ffffff;
+  --border:#e7e7ea;
+  --ink:#14161a;
+  --ink-soft:#6b7280;
+  --ink-faint:#9a9da6;
+  --sidebar-bg:#ffffff;
+  --sidebar-border:#e7e7ea;
+  --sidebar-text:#6b7280;
+  --sidebar-text-active:#14161a;
+
+  --red:#e60000;      /* Vodafone red — primary accent / budget system */
+  --red-dark:#b30000;
+  --red-soft:#fde8e8;
+  --red-ink:#b30000;
+
+  --blue:#2d9cdb;      /* delivery system */
+  --blue-soft:#e4f3fc;
+  --blue-ink:#1a6fa8;
+
+  --teal:#00a99d;      /* demand system */
+  --teal-soft:#e0f5f3;
+  --teal-ink:#00786f;
+
+  --navy:#2f3c7e;
+  --navy-soft:#e8eaf6;
+  --orange:#f2994a;
+  --orange-soft:#fdecdd;
+  --purple:#9b51e0;
+  --purple-soft:#f3e8fc;
+  --green:#1aa37a;
+  --green-soft:#e4f7f0;
+  --amber:#f2994a;
+  --amber-soft:#fdecdd;
+
+  --radius:12px;
+  --font-display:'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body:'Inter', 'Segoe UI', sans-serif;
+}
+
+html{ font-size:15px; }
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Layout ---------- */
+.app{ display:block; min-height:100vh; }
+
+.topbar{
+  position:sticky; top:0; left:0; right:0; z-index:40;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--sidebar-border);
+  display:flex; align-items:center; gap:26px;
+  padding:14px 40px;
+}
+.topbar-brand{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-display); font-weight:700; font-size:.98rem; color:var(--ink);
+  letter-spacing:.01em; white-space:nowrap; flex-shrink:0;
+}
+.topbar-logo{
+  width:26px; height:26px; border-radius:8px; background:var(--red); color:#fff;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  font-family:var(--font-display); font-weight:700; font-size:.8rem;
+}
+.topbar-nav{
+  display:flex; align-items:center; gap:4px; overflow-x:auto;
+  scrollbar-width:none;
+}
+.topbar-nav::-webkit-scrollbar{ display:none; }
+.nav-item{
+  white-space:nowrap; background:none; border:none; cursor:pointer;
+  color:var(--sidebar-text); font-family:var(--font-body); font-size:.84rem;
+  padding:7px 12px; border-radius:100px;
+  transition:background .12s ease, color .12s ease;
+}
+.nav-item:hover{ background:#ffffffa8; color:var(--ink); }
+.nav-item.active{ background:#ffffff; color:var(--sidebar-text-active); font-weight:600; }
+
+.main{
+  flex:1; min-width:0;
+  padding:0 0 40px 0;
+}
+.page-section{
+  padding:46px 48px;
+  border-bottom:1px solid var(--border);
+  max-width:1180px;
+  scroll-margin-top:70px;
+}
+.page-section.full{ max-width:none; }
+.page-section:last-child{ border-bottom:none; }
+
+/* Top-level tab pages — one visible at a time, no cross-section scrolling */
+.tab-page{ display:none; }
+.tab-page.active{ display:block; }
+
+/* Sub-tab panels (used inside Governance & org) */
+.gov-panel{ display:none; }
+.gov-panel.active{ display:block; }
+
+/* ---------- Typography ---------- */
+h1{
+  font-family:var(--font-display); font-weight:700; font-size:1.9rem;
+  margin:0 0 8px 0; letter-spacing:-.01em; line-height:1.15;
+}
+h2{
+  font-family:var(--font-display); font-weight:600; font-size:1.3rem;
+  margin:38px 0 14px 0; letter-spacing:-.005em;
+}
+h2:first-of-type{ margin-top:4px; }
+h3{
+  font-family:var(--font-display); font-weight:600; font-size:1.02rem;
+  margin:0 0 6px 0;
+}
+p{ line-height:1.65; color:var(--ink-soft); margin:0 0 14px 0; max-width:74ch; }
+.lede{ font-size:1.02rem; color:var(--ink-soft); max-width:66ch; }
+.eyebrow{ font-size:.76rem; color:var(--ink-faint); font-weight:700; margin-bottom:8px; letter-spacing:.01em; }
+a{ color:var(--blue-ink); }
+
+/* ---------- Reusable pieces ---------- */
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:18px 20px;
+}
+.grid{ display:grid; gap:14px; }
+.grid-2{ grid-template-columns:1fr 1fr; }
+.grid-3{ grid-template-columns:repeat(3,1fr); }
+@media(max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr 1fr; } }
+@media(max-width:640px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+.stat-strip{
+  display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--border); border-radius:var(--radius);
+  background:var(--surface); margin:18px 0 6px 0; overflow:hidden;
+}
+.stat-cell{
+  flex:1; min-width:180px; padding:14px 18px; border-right:1px solid var(--border);
+}
+.stat-cell:last-child{ border-right:none; }
+.stat-num{ font-family:var(--font-display); font-weight:700; font-size:1.35rem; color:var(--ink); }
+.stat-label{ font-size:.76rem; color:var(--ink-soft); margin-top:2px; line-height:1.4; }
+
+.quick-card{
+  display:flex; align-items:flex-start; gap:12px;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px 18px; cursor:pointer; text-align:left; transition:border-color .15s ease;
+}
+.quick-card:hover{ border-color:var(--ink-faint); }
+.quick-card .t{ font-family:var(--font-display); font-weight:600; font-size:.95rem; margin-bottom:4px; color:var(--ink); }
+.quick-card .d{ font-size:.82rem; color:var(--ink-soft); line-height:1.5; }
+
+/* Icon badges — rounded-square tinted icon container, reused across cards */
+.icon-badge{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.icon-badge svg{ display:block; }
+.icon-badge-sm{ width:36px; height:36px; border-radius:8px; }
+.icon-badge-md{ width:44px; height:44px; border-radius:10px; margin-bottom:12px; }
+.icon-badge-lg{ width:56px; height:56px; border-radius:16px; margin-bottom:14px; }
+.icon-red{ background:var(--red-soft); color:var(--red-ink); }
+.icon-blue{ background:var(--blue-soft); color:var(--blue-ink); }
+.icon-teal{ background:var(--teal-soft); color:var(--teal-ink); }
+.icon-navy{ background:var(--navy-soft); color:var(--navy); }
+.icon-orange{ background:var(--orange-soft); color:var(--orange); }
+.icon-purple{ background:var(--purple-soft); color:var(--purple); }
+.icon-green{ background:var(--green-soft); color:var(--green); }
+
+/* Icon-fronted card, matching the reference feature-card layout */
+.feature-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:20px 22px;
+}
+.feature-card h3{ font-size:1rem; margin-bottom:6px; }
+.feature-card p{ font-size:.86rem; margin-bottom:0; }
+
+/* Summary card with icon + chip trail, matching the reference's routing card */
+.summary-card{
+  display:flex; gap:16px; align-items:flex-start;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:20px 22px; margin:22px 0 28px 0;
+}
+.summary-card h3{ font-size:1rem; margin-bottom:4px; }
+.summary-card p{ font-size:.86rem; margin-bottom:14px; }
+.chip-trail{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.chip-trail .chip{
+  font-family:var(--font-body); font-weight:600; font-size:.78rem;
+  padding:6px 13px; border-radius:9px; border:1px solid var(--border);
+  background:var(--bg); color:var(--ink-soft); white-space:nowrap;
+}
+.chip-trail .chip.accent{ border:1px solid var(--navy); color:var(--navy); background:var(--navy-soft); }
+.chip-trail .arrow{ color:var(--ink-soft); flex-shrink:0; display:flex; }
+
+/* Pills / tags */
+.pill{
+  display:inline-flex; align-items:center; font-size:.7rem; font-weight:600;
+  padding:3px 9px; border-radius:100px; white-space:nowrap;
+}
+.pill-red{ background:var(--red-soft); color:var(--red-ink); }
+.pill-blue{ background:var(--blue-soft); color:var(--blue-ink); }
+.pill-teal{ background:var(--teal-soft); color:var(--teal-ink); }
+.pill-grey{ background:#f0eef5; color:var(--ink-soft); }
+
+/* Filter buttons */
+.filter-row{ display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 22px 0; }
+.filter-btn{
+  font-family:var(--font-body); font-size:.8rem; font-weight:600;
+  padding:7px 14px; border-radius:100px; border:1px solid var(--border);
+  background:var(--surface); color:var(--ink-soft); cursor:pointer;
+  transition:all .12s ease;
+}
+.filter-btn:hover{ border-color:var(--ink-faint); }
+.filter-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+
+.search-box{
+  width:100%; max-width:420px; padding:10px 14px; border:1px solid var(--border);
+  border-radius:8px; font-family:var(--font-body); font-size:.88rem; background:var(--surface);
+  color:var(--ink);
+}
+.search-box:focus{ outline:none; border-color:var(--ink-faint); }
+
+/* ---------- Gate systems ---------- */
+.gate-highlight-bar{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:14px 18px; margin-bottom:26px; flex-wrap:wrap;
+}
+.gate-highlight-bar p{ margin:0; font-size:.87rem; color:var(--ink-soft); max-width:none; }
+.gate-highlight-bar p strong{ color:var(--ink); }
+.btn{
+  font-family:var(--font-body); font-weight:600; font-size:.83rem;
+  padding:9px 16px; border-radius:9px; border:1px solid var(--ink); background:var(--ink);
+  color:#fff; cursor:pointer; white-space:nowrap; transition:opacity .12s ease;
+}
+.btn:hover{ opacity:.85; }
+
+.gate-columns{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+@media(max-width:860px){ .gate-columns{ grid-template-columns:1fr; } }
+.gate-col{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px; border-top:3px solid var(--sys-color, var(--ink));
+}
+.gate-col.sys-budget{ --sys-color:var(--red); }
+.gate-col.sys-delivery{ --sys-color:var(--blue); }
+.gate-col.sys-demand{ --sys-color:var(--teal); }
+.gate-col .sys-title{ font-family:var(--font-display); font-weight:600; font-size:.94rem; margin-bottom:2px; }
+.gate-col .sys-sub{ font-size:.74rem; color:var(--ink-faint); margin-bottom:14px; }
+.gate-chip{
+  display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+  background:var(--bg); border:1px solid var(--border); border-radius:8px;
+  padding:9px 11px; margin-bottom:7px; cursor:pointer; font-family:var(--font-body);
+  transition:all .12s ease;
+}
+.gate-chip:hover{ border-color:var(--ink-faint); }
+.gate-chip.selected{ background:var(--sys-color); border-color:var(--sys-color); }
+.gate-chip.selected .g-code, .gate-chip.selected .g-name{ color:#fff; }
+.gate-chip.flash{ animation:flashglow 1.1s ease 2; }
+@keyframes flashglow{ 0%,100%{ box-shadow:0 0 0 0 transparent; } 50%{ box-shadow:0 0 0 4px var(--sys-color); } }
+.g-code{ font-family:var(--font-display); font-weight:700; font-size:.8rem; color:var(--ink); min-width:34px; }
+.g-name{ font-size:.8rem; color:var(--ink-soft); }
+
+.gate-detail{
+  margin-top:18px; background:var(--surface); border:1px solid var(--border);
+  border-left:3px solid var(--sys-color,var(--ink)); border-radius:var(--radius);
+  padding:18px 20px; display:none;
+}
+.gate-detail.show{ display:block; }
+.gate-detail .k{ font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); font-weight:700; margin-top:10px; }
+.gate-detail .k:first-child{ margin-top:0; }
+.gate-detail .v{ font-size:.89rem; color:var(--ink); margin-top:2px; }
+
+/* ---------- Home hero / flowcharts ---------- */
+.hero-head{ padding:40px 48px 6px 48px; scroll-margin-top:70px; }
+.hero-stats-wrap{ padding:0 48px; }
+
+.tab-row{ display:flex; gap:6px; border-bottom:1px solid var(--border); margin:22px 0 18px 0; flex-wrap:wrap; }
+.tab-btn{
+  font-family:var(--font-body); font-weight:600; font-size:.85rem;
+  padding:10px 4px; margin-right:22px; border:none; background:none; cursor:pointer;
+  color:var(--ink-faint); border-bottom:2px solid transparent; margin-bottom:-1px;
+}
+.tab-btn.active{ color:var(--ink); border-bottom:2px solid var(--red); }
+
+.bpmn-legend{
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center;
+  padding:8px 14px; background:transparent; border:none;
+  margin-top:12px; font-size:.72rem; color:var(--ink-faint);
+}
+.legend-item{ display:flex; align-items:center; gap:5px; }
+.legend-shape{ flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
+.legend-shape.evt{ width:13px; height:13px; border-radius:50%; border:1.5px solid var(--ink-faint); background:#fff; }
+.legend-shape.evt.end{ background:var(--ink-faint); }
+.legend-shape.task{ width:20px; height:12px; border-radius:2px; border:1.2px solid var(--ink-faint); background:#fff; }
+.legend-shape.gov{ width:20px; height:12px; border-radius:2px; border:1.2px solid var(--ink-faint); background:#fff; font-size:9px; color:var(--red); }
+.legend-shape.gate{ width:11px; height:11px; border:1.2px solid var(--ink-faint); background:#fff; transform:rotate(45deg); }
+.legend-shape.mile{ width:20px; height:12px; border-radius:2px; border:1.2px solid var(--ink-faint); background:#fff; font-size:8px; color:var(--red); }
+
+.bpmn-frame{
+  border:1px solid var(--border); border-radius:var(--radius); background:var(--surface);
+  overflow:visible; position:relative; display:flex; align-items:stretch;
+}
+.bpmn-lane-labels{
+  flex-shrink:0; display:flex; flex-direction:column; border-right:1px solid var(--border);
+  background:var(--surface); z-index:5; border-radius:var(--radius) 0 0 var(--radius); overflow:hidden;
+}
+.bpmn-lane-labels .lane-tag{
+  font-family:var(--font-display); font-weight:600; font-size:.72rem;
+  color:var(--ink); padding:0 10px; line-height:1.25;
+  display:flex; align-items:center; border-bottom:1px solid var(--border);
+  box-sizing:border-box;
+}
+.bpmn-lane-labels .lane-tag:last-child{ border-bottom:none; }
+.bpmn-viewport{ position:relative; overflow-x:auto; overflow-y:visible; padding:4px 0 14px 0; flex:1; min-width:0; border-radius:0 var(--radius) var(--radius) 0; }
+.bpmn-canvas{ position:relative; transform-origin:top left; }
+
+.bpmn-lane{
+  position:absolute; left:0; right:0;
+  border-bottom:1px solid var(--border);
+}
+.bpmn-lane:last-child{ border-bottom:none; }
+
+.bpmn-node{
+  position:absolute; display:flex; align-items:center; justify-content:center;
+  text-align:center; cursor:pointer; z-index:2; transition:transform .12s ease, box-shadow .12s ease;
+  font-family:var(--font-body);
+}
+.bpmn-node:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(20,22,26,.14); }
+
+.bpmn-node.n-task, .bpmn-node.n-gov, .bpmn-node.n-mile{
+  border-radius:7px; border:1.5px solid var(--ink); background:#fff;
+  padding:5px 10px; font-size:.76rem; font-weight:600; color:var(--ink); line-height:1.22;
+  flex-direction:column; gap:2px;
+  transform:translateY(-50%);
+}
+.bpmn-node.n-task:hover, .bpmn-node.n-gov:hover, .bpmn-node.n-mile:hover{ transform:translateY(calc(-50% - 2px)); }
+.bpmn-node-badge{
+  display:inline-flex; align-items:center; gap:3px; font-size:.6rem; font-weight:700;
+  color:var(--red); text-transform:uppercase; letter-spacing:.02em;
+}
+
+.bpmn-node.n-gate{ background:#fff; border:1.5px solid var(--ink); }
+.bpmn-node.n-gate .gate-inner{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; transform:rotate(45deg); }
+.bpmn-node.n-gate span{ transform:rotate(-45deg); font-size:.68rem; font-weight:700; color:var(--ink); padding:0 4px; line-height:1.1; }
+
+.bpmn-node.n-event{ border-radius:50%; border:2px solid var(--ink); background:#fff; font-size:.64rem; font-weight:700; color:var(--ink); padding:3px; }
+.bpmn-node.n-event.end{ background:var(--ink); color:#fff; }
+
+.bpmn-edge-label{
+  position:absolute; font-size:.76rem; font-weight:700; color:var(--ink-soft);
+  background:var(--surface); padding:0 5px; z-index:3; pointer-events:none;
+}
+
+.bpmn-caption{ font-size:.9rem; color:var(--ink-soft); margin:10px 2px 0 2px; }
+
+/* Input / Output card — shown for every process (NEP, DB/LRP, CAR, Demand, ...) */
+.io-card{
+  display:grid; grid-template-columns:1fr 1fr;
+  border:1px solid var(--border); border-radius:var(--radius); background:var(--surface);
+  margin:2px 0 18px 0; overflow:hidden;
+}
+.io-col{ padding:14px 20px; }
+.io-col + .io-col{ border-left:1px solid var(--border); }
+.io-label{ font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
+.io-label.io-in{ color:var(--blue-ink); }
+.io-label.io-out{ color:var(--teal-ink); }
+.io-col ul{ margin:0; padding-left:17px; }
+.io-col li{ font-size:.83rem; color:var(--ink-soft); line-height:1.55; margin-bottom:5px; }
+.io-col li:last-child{ margin-bottom:0; }
+@media(max-width:700px){
+  .io-card{ grid-template-columns:1fr; }
+  .io-col + .io-col{ border-left:none; border-top:1px solid var(--border); }
+}
+
+/* Modal */
+.modal-backdrop{
+  display:none; position:fixed; inset:0; background:rgba(20,22,26,.42);
+  z-index:100; align-items:center; justify-content:center; padding:20px;
+}
+.modal-backdrop.show{ display:flex; }
+.modal-card{
+  background:#fff; border-radius:14px; max-width:480px; width:100%;
+  padding:30px 30px 26px 30px; position:relative; box-shadow:0 24px 60px rgba(20,22,26,.22);
+  max-height:82vh; overflow-y:auto;
+}
+.modal-close{
+  position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:50%;
+  border:1px solid var(--border); background:#fff; font-size:1.1rem; line-height:1; cursor:pointer;
+  color:var(--ink-soft);
+}
+.modal-close:hover{ background:var(--bg); }
+.modal-kicker{ font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); margin-bottom:8px; }
+.modal-card h3{ font-size:1.12rem; margin-bottom:14px; padding-right:20px; }
+.modal-field{ margin-bottom:14px; }
+.modal-field:last-child{ margin-bottom:0; }
+.modal-field .fk{ font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); font-weight:700; margin-bottom:3px; }
+.modal-field .fv{ font-size:.89rem; color:var(--ink); line-height:1.55; }
+
+/* ---------- Flow track (rolling/monthly stepper) ---------- */
+.flow-track{ display:flex; flex-direction:column; gap:0; position:relative; }
+.flow-step{ display:flex; gap:16px; position:relative; padding-bottom:20px; }
+.flow-step .rail{ display:flex; flex-direction:column; align-items:center; flex-shrink:0; width:30px; }
+.flow-step .dot{
+  width:28px; height:28px; border-radius:50%; background:var(--ink); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display);
+  font-size:.76rem; font-weight:700; flex-shrink:0; z-index:2;
+}
+.flow-step .line{ width:2px; flex:1; background:var(--border); margin-top:2px; }
+.flow-step:last-child .line{ display:none; }
+.flow-step .content{ flex:1; padding-top:2px; }
+.flow-step button.step-head{ all:unset; cursor:pointer; display:flex; align-items:center; justify-content:space-between; width:100%; padding:2px 0; }
+.flow-step .step-title{ font-family:var(--font-display); font-weight:600; font-size:.92rem; color:var(--ink); }
+.flow-step .step-meta{ font-size:.75rem; color:var(--ink-faint); margin-top:2px; }
+.flow-step .chev{ color:var(--ink-faint); font-size:.8rem; transition:transform .15s ease; flex-shrink:0; }
+.flow-step.open .chev{ transform:rotate(90deg); }
+.flow-step .step-body{ max-height:0; overflow:hidden; transition:max-height .22s ease; font-size:.86rem; color:var(--ink-soft); line-height:1.6; }
+.flow-step.open .step-body{ max-height:400px; padding-top:8px; }
+.flow-step.governance .dot{ background:var(--blue-ink); }
+.flow-step.milestone .dot{ background:var(--red-ink); }
+
+/* ---------- Role cards ---------- */
+.role-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; cursor:pointer; transition:border-color .12s ease; }
+.role-card:hover{ border-color:var(--ink-faint); }
+.role-card .head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.role-card h3{ font-size:.96rem; }
+.role-card .tagline{ font-size:.82rem; color:var(--ink-soft); margin-top:6px; line-height:1.5; }
+.role-card .full{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
+.role-card.open .full{ max-height:600px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+.role-card .full p{ font-size:.84rem; margin-bottom:0; }
+.role-card .chev{ color:var(--ink-faint); flex-shrink:0; transition:transform .15s ease; font-size:1.1rem; }
+.role-card.open .chev{ transform:rotate(45deg); }
+
+/* ---------- Tables ---------- */
+table{ width:100%; border-collapse:collapse; font-size:.85rem; }
+thead th{ text-align:left; font-family:var(--font-body); font-weight:700; font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); padding:10px 12px; border-bottom:1px solid var(--border); }
+tbody td{ padding:11px 12px; border-bottom:1px solid var(--border); color:var(--ink); vertical-align:top; }
+tbody tr:hover{ background:var(--bg); }
+tbody td.soft{ color:var(--ink-soft); }
+.table-wrap{ border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--surface); }
+.table-wrap table{ margin:0; }
+.table-wrap thead th:first-child, .table-wrap tbody td:first-child{ padding-left:16px; }
+
+/* Glossary */
+.glossary-list{ display:flex; flex-direction:column; gap:0; }
+.glossary-row{ display:flex; gap:18px; padding:12px 0; border-bottom:1px solid var(--border); }
+.glossary-row .term{ font-family:var(--font-display); font-weight:600; font-size:.85rem; min-width:110px; color:var(--red-ink); flex-shrink:0; }
+.glossary-row .def{ font-size:.86rem; color:var(--ink-soft); line-height:1.5; }
+.empty-state{ padding:30px 0; color:var(--ink-faint); font-size:.87rem; }
+
+.section-foot-note{ margin-top:32px; padding:14px 16px; background:var(--sidebar-bg); border-radius:9px; font-size:.79rem; color:var(--ink-soft); line-height:1.55; }
+
+@media(max-width:960px){
+  .topbar{ padding:12px 20px; gap:16px; }
+  .page-section, .hero-head, .hero-stats-wrap{ padding-left:22px; padding-right:22px; }
+  .page-section{ padding-top:36px; padding-bottom:36px; }
+  .gate-columns{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand"><span class="topbar-logo">N</span>NSE Planning Explorer</div>
+  <nav class="topbar-nav" id="navScroll"></nav>
+</div>
+
+<div class="app">
+  <main class="main">
+
+    <!-- HOME / HERO: PROCESS FLOWCHARTS -->
+    <div class="tab-page active" id="home">
+    <div class="hero-head">
+      <div class="eyebrow">NEP · DB/LRP · CAR · Demand</div>
+      <h1>How a network plan gets approved, end to end.</h1>
+      <p class="lede">Four processes, one flow. Switch tabs to move between them — click any step for its full detail.</p>
+
+      <div class="summary-card">
+        <span class="icon-badge icon-badge-md icon-navy" style="margin-bottom:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"></circle><circle cx="18" cy="5" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path></svg></span>
+        <div>
+          <h3>This guide follows one demand from front door to delivered project</h3>
+          <p>Strategy and budget are set first, a specific demand is triaged and approved next, and it only becomes a funded project once it clears every gate below.</p>
+          <div class="chip-trail">
+            <span class="chip">Strategy (NEP)</span>
+            <span class="arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+            <span class="chip">Budget (DB/LRP → CAR)</span>
+            <span class="arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+            <span class="chip">Demand Front Door</span>
+            <span class="arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+            <span class="chip accent">Integrated Delivery</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-stats-wrap">
+      <div class="stat-strip" id="statStrip"></div>
+    </div>
+
+    <section class="page-section full" id="sec-flowcharts">
+      <div class="tab-row" id="cycleTabs"></div>
+      <div id="bpmnHead"></div>
+      <div class="bpmn-frame">
+        <div class="bpmn-lane-labels" id="bpmnLaneLabels"></div>
+        <div class="bpmn-viewport" id="bpmnViewport">
+          <div class="bpmn-canvas" id="bpmnCanvas"></div>
+        </div>
+      </div>
+      <div class="bpmn-caption" id="bpmnFitNote"></div>
+      <div class="bpmn-legend" id="bpmnLegend"></div>
+
+      <div class="flow-track" id="cycleFlow" style="margin-top:8px;"></div>
+    </section>
+    </div>
+
+    <!-- GATE SYSTEMS -->
+    <section class="page-section full tab-page" id="sec-gates">
+      <div class="eyebrow">The single biggest source of confusion</div>
+      <h2 style="margin-top:0;">Three gate systems. Same labels. Different meanings.</h2>
+      <p class="lede">NSE runs three independent, sequentially-numbered "gate" systems side by side. A project or demand can be at "G2" in all three at once — and each G2 means something completely different, owned by a different person.</p>
+
+      <div class="gate-highlight-bar">
+        <p><strong>Try it:</strong> press the button to see every "G2" light up across all three systems at the same time.</p>
+        <button class="btn" id="highlightG2">Highlight G2 everywhere</button>
+      </div>
+
+      <div class="gate-columns" id="gateColumns"></div>
+      <div class="gate-detail" id="gateDetail"></div>
+
+      <div class="section-foot-note">Rule of thumb for SNIP: never show a bare gate number in the UI without naming which of these three systems it belongs to.</div>
+    </section>
+
+    <!-- GOVERNANCE & ORG -->
+    <section class="page-section full tab-page" id="sec-governance">
+      <div class="eyebrow">Who runs it</div>
+      <h2 style="margin-top:0;">Governance &amp; organisation</h2>
+      <p class="lede">Network planning at NSE runs on three linked pillars — Demand &amp; Governance, Planning, and Delivery — under one Transformation umbrella, with a six-board chain that takes a raw request all the way to a funded, delivered project.</p>
+
+      <div class="tab-row" id="govTabs"></div>
+
+      <div class="gov-panel active" data-panel="model">
+        <h2 style="margin-top:0;">The three-part operating model</h2>
+        <div class="grid grid-3" id="pillarGrid"></div>
+      </div>
+
+      <div class="gov-panel" data-panel="chain">
+        <h2 style="margin-top:0;">The governance board chain</h2>
+        <p>Every demand, in principle, passes through this sequence before it becomes delivered work. Click a board to see its purpose.</p>
+        <div class="flow-track" id="boardChain"></div>
+      </div>
+
+      <div class="gov-panel" data-panel="leadership">
+        <h2 style="margin-top:0;">Current leadership (named)</h2>
+        <p>Antonella Faniuolo leads Network Planning, Demand, Delivery &amp; Transformation (NPDDT) overall.</p>
+        <div class="grid grid-2" id="orgGrid"></div>
+      </div>
+
+      <div class="gov-panel" data-panel="calendar">
+        <h2 style="margin-top:0;">Governance meeting calendar</h2>
+        <p>The recurring forums that consume everything documented in this guide.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Meeting</th><th>Recurrence</th><th>Key actors</th></tr></thead>
+            <tbody id="meetingBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROLES -->
+    <section class="page-section full tab-page" id="sec-roles">
+      <div class="eyebrow">Who does what</div>
+      <h2 style="margin-top:0;">Role directory</h2>
+      <p class="lede">Every role below touches the planning data SNIP is meant to manage. Click a card to see its full accountabilities.</p>
+
+      <div class="filter-row" id="roleFilters"></div>
+      <div class="grid grid-2" id="roleGrid"></div>
+    </section>
+
+    <!-- STAKEHOLDERS -->
+    <section class="page-section full tab-page" id="sec-stakeholders">
+      <div class="eyebrow">Named contacts, market by market</div>
+      <h2 style="margin-top:0;">Stakeholder map</h2>
+      <p class="lede">Notice how few distinct people cover clusters of markets — search or filter to see the pattern for yourself.</p>
+
+      <input class="search-box" id="stakeholderSearch" placeholder="Search a market or a name…">
+      <div class="table-wrap" style="margin-top:16px;">
+        <table>
+          <thead><tr><th>Market</th><th>Demand SPOC</th><th>Network Market Partner</th><th>CNO</th><th>Market CEO</th></tr></thead>
+          <tbody id="stakeholderBody"></tbody>
+        </table>
+      </div>
+      <div class="section-foot-note" id="spofNote"></div>
+    </section>
+
+    <!-- KPI CATALOG -->
+    <section class="page-section full tab-page" id="sec-kpis">
+      <div class="eyebrow">Productivity KPI catalog</div>
+      <h2 style="margin-top:0;">Standardised KPIs, by function</h2>
+      <p class="lede">A standardised set of function-level KPIs, separate from the ~600 strategic KPIs validated manually today. Filter by function.</p>
+
+      <div class="filter-row" id="kpiFilters"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th style="width:20%">Function</th><th style="width:16%">KPI</th><th>Description</th></tr></thead>
+          <tbody id="kpiBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- GLOSSARY -->
+    <section class="page-section full tab-page" id="sec-glossary">
+      <div class="eyebrow">Reference</div>
+      <h2 style="margin-top:0;">Glossary</h2>
+      <p class="lede">Search any acronym used across NSE planning and budgeting documentation.</p>
+
+      <input class="search-box" id="glossarySearch" placeholder="Search an acronym or term…">
+      <div class="glossary-list" id="glossaryList" style="margin-top:18px;"></div>
+    </section>
+
+    <div style="padding:26px 48px; font-size:.78rem; color:var(--ink-faint);">Reference build for the SNIP business case · Network Strategy &amp; Engineering</div>
+
+  </main>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-card" id="modalCard" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+    <div class="modal-kicker" id="modalKicker"></div>
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ============================= DATA ============================= */
+
+const NAV = [
+  { id:"home", label:"Home" },
+  { id:"gates", label:"Gate systems" },
+  { id:"governance", label:"Governance & org" },
+  { id:"roles", label:"Role directory" },
+  { id:"stakeholders", label:"Stakeholder map" },
+  { id:"kpis", label:"KPI catalog" },
+  { id:"glossary", label:"Glossary" },
+];
+
+const STATS = [
+  { num:"17", label:"markets run through the same planning cycle" },
+  { num:"3", label:"gate systems that reuse the same numbers" },
+  { num:"~600", label:"strategic KPIs validated by one person, by hand" },
+  { num:"5", label:"Network Market Partners covering all 17 markets" },
+];
+
+const PILLARS = [
+  { t:"Demand & Governance", d:"Multi-market demand through a single front door; harmonised process and governance across all countries.", icon:"inbox", color:"blue" },
+  { t:"Planning", d:"Reconciles market competitive dynamics, customer trends, regulatory constraints, and the budget/LRP envelope into one plan.", icon:"layers", color:"red" },
+  { t:"Delivery", d:"End-to-end integrated delivery of NSE projects, sourced through onshoring and offshoring teams, including VOIS.", icon:"route", color:"teal" },
+];
+
+const BOARD_CHAIN = [
+  { code:"—", title:"Single Demand Front Door", meta:"Entry point", body:"Every demand is qualified here first; a completed Demand Impact Assessment is the prerequisite to move forward." },
+  { code:"1", title:"Demand Board", meta:"Approval", body:"Reviews and approves all demand before it's formally considered by the Planning Team." },
+  { code:"2", title:"Network Rollout Board", meta:"Governance meeting · Bi-annual", body:"Agrees the 3-year Network Evolution Plan with each market's CNO/CEO, based on strategic objectives and market requirements.", governance:true },
+  { code:"3", title:"Capital Allocation Review (CAR)", meta:"Governance meeting", body:"Sets the budget targets and affordability envelope each market plan must fit within.", governance:true },
+  { code:"4", title:"Mobilization & Spend Approval Board", meta:"Governance meeting · Monthly", body:"Detailed review of approval documentation; manages budget mobilization of individual projects.", governance:true },
+  { code:"5", title:"In-year Change Management Board", meta:"Governance meeting", body:"Chairs the Local Market Change Board / NCAR; governs approval of changes to the in-year plan." },
+  { code:"6", title:"Performance vs Key Metrics Board", meta:"Governance meeting", body:"Closes the loop — reviews delivered performance against the KPIs and targets originally agreed." },
+];
+
+const ORG = [
+  { name:"Antonella Faniuolo", role:"Head of NPDD&T — overall lead", detail:"Owns Network Planning, Demand, Delivery & Transformation end to end." },
+  { name:"Murdo Tolmie", role:"Europe Demand, Governance & Harmonisation", detail:"Leads the unified demand front door and harmonisation of governance processes across markets." },
+  { name:"Daniele Brillo", role:"NW Planning & Business Partnership", detail:"Owns NEP, Detailed Budget and LRP execution; the Network Market Partners report into this team." },
+  { name:"Samah Khamis", role:"NSE VOIS", detail:"Runs centralized delivery management plus VOIS service centres in Romania, Egypt and India." },
+  { name:"Christos Touloupis", role:"Integrated Delivery & Sourcing Management (a.i.)", detail:"Responsible for E2E integrated delivery of NSE projects and sourcing from onshore/offshore teams." },
+  { name:"Cecilia Batetta", role:"Transformation", detail:"Runs the Transformation Office — global steering, transformation management, and stakeholder management." },
+];
+
+const MEETINGS = [
+  ["Network Rollout Board","Bi-annual","CNO, NSE–D&P (Market E2E Planner), Head of ND/NO/NQ, Market Finance, NSE–Vertical SPOC"],
+  ["Spend Approval Board","Monthly","Governance SPOC (chair), Planning SPOCs, Finance, Requestor, Executive Approvers"],
+  ["NEP Local ExCo Approval","Annual, Sept/Oct","CNO, Planning SPOC, Market CEO, Finance"],
+  ["NSAB — Network Strategy & Architecture Board","Monthly/Quarterly with Alberto","Head of VF Networks, EU4 CNOs, EU cluster, Head of NSE/ND/NO/NQ, Cybersecurity"],
+  ["NLT Strategic","Monthly","Head of VF Networks/PMT/NSE/NA/ND/NO/CF, HR BP, Finance BP, CNOs"],
+  ["Engineering Management Meetings","Monthly","Head of NSE, NSE Vertical core team, Engagement Executives, Key projects SPOC"],
+  ["CNO Monthly Catchup","Monthly","Head of NSE, CNO, Head of VF Networks, Finance BP, Engagement Execs"],
+  ["NSE Board","Monthly","Head of NSE, NSE Vertical core team, Engagement Executives, CNO, HR BP, Finance BP"],
+  ["Market Interlock","Monthly","Market CEO/CNO/CIO, CTO, Networks & Digital&IT Directors, Cyber Security Director"],
+  ["Demand Approval Board","Monthly","Head of Vertical Functions, CNO, Demand & Governance SPOC, E2E Planner, Finance"],
+  ["Budget Change Approval Board (NCAR)","Monthly/Quarterly","CNO, Demand & Governance SPOC, Planning SPOC, E2E Planner, Finance"],
+];
+
+/* Gate systems */
+const GATE_SYSTEMS = [
+  { id:"budget", cls:"sys-budget", icon:"coins", color:"red", title:"Budget gates (BPT)", sub:"Governs whether money is approved · Owner: NMP / EE / CTO / Local Finance",
+    gates:[
+      { code:"G0", name:"Prior LRP baseline", owner:"Network Market Partner", meaning:"The starting point: last cycle's agreed Long Range Plan baseline, before any new demand is added." },
+      { code:"G1", name:"Raw demand + priority", owner:"NMP / Vertical Budget SPOC", meaning:"New demand is logged with a priority tag (P0–P4) against the LRP envelope, plus an on-top allowance of 10–20%." },
+      { code:"G2", name:"EE sign-off", owner:"Engagement Executive", meaning:"The Engagement Executive signs off the cost plan before it goes forward for CNO-level review." },
+      { code:"G3", name:"CNO review", owner:"CNO", meaning:"The market CNO reviews the plan against strategic priorities and affordability." },
+      { code:"G4", name:"Final baseline", owner:"CNO / NMP", meaning:"CNO feedback is embedded and the plan becomes the new final Capex/Opex baseline for the year." },
+    ]
+  },
+  { id:"delivery", cls:"sys-delivery", icon:"route", color:"blue", title:"Integrated Delivery gates", sub:"Governs whether a project is ready to deliver · Owner: EIM / EDM / MDM / Solution Authority",
+    gates:[
+      { code:"G0", name:"Start", owner:"Engineering Initiative Manager (EIM)", meaning:"Initiative setup: vertical-department dependency analysis and confirmation of the project governance model." },
+      { code:"G1", name:"Go on solution design", owner:"EIM", meaning:"High-level design and feasibility complete enough to commit to a solution direction." },
+      { code:"M1", name:"MDM sign-off", owner:"Market Delivery Manager", meaning:"A milestone (not a gate): the MDM signs off the final impact assessment before G2." },
+      { code:"G2", name:"Go / No-Go", owner:"MDM / DAM", meaning:"The funded decision point — project team allocation and vendor engagement kick off immediately after." },
+      { code:"G3", name:"Ready for acceptance", owner:"Engineering Delivery Manager (EDM)", meaning:"Low-level design and the detailed project management plan are signed off." },
+      { code:"G4", name:"Ready for service", owner:"EDM", meaning:"Lab delivery and testing (including First Office Application) are complete." },
+      { code:"G5", name:"Live operations", owner:"EDM", meaning:"The project goes live; live testing and capacity handover to Operations occurs." },
+      { code:"G6", name:"Project closure", owner:"MDM", meaning:"Final handover to Operations and the project closure checklist are complete." },
+    ]
+  },
+  { id:"demand", cls:"sys-demand", icon:"inbox", color:"teal", title:"Demand Management gates", sub:"Governs whether a demand is triaged and approved · Owner: DAM / Demand Governance Team",
+    gates:[
+      { code:"G0", name:"Requestor raises demand", owner:"Requestor / Demand Assurance Manager", meaning:"The demand enters the Single Front Door and the DAM performs initial triage." },
+      { code:"G2", name:"Demand approved → transition", owner:"Demand Board", meaning:"The Demand Board approves the demand and it transitions into Integrated Delivery — this is where the Delivery gate system's own G0–G2 begins." },
+      { code:"G6", name:"Delivery engagement complete", owner:"Requestor", meaning:"If needed, the requestor engages directly with delivery teams once the delivered project has closed." },
+    ]
+  },
+];
+
+/* Stepper-only cycles (Rolling Forecast, Monthly Reporting) */
+const CYCLES = {
+  rolling:{
+    label:"Rolling Forecast",
+    intro:"The shortest, most frequent cycle — manages in-year prioritization and adjustment of the already-approved budget plan.",
+    io:{
+      inputs:[
+        "In-year demand collected from markets & business functions",
+        "Current approved budget plan baseline",
+      ],
+      outputs:[
+        "Updated plan, including KPIs, submitted to Finance",
+        "NW Leadership & Director informed of agreed changes",
+      ],
+    },
+    steps:[
+      { code:"1", title:"Collect in-year demand", meta:"Engagement Executives / Market Finance", body:"New demand is collected from markets, business functions and VF NW functions outside the standard planning cycle." },
+      { code:"2", title:"Assurance & evaluation", meta:"Multi-lane", body:"The new demand is assessed and evaluated against the existing strategy." },
+      { code:"3", title:"Recommend embedding", meta:"Multi-lane", body:"If agreed, recommendations are made to embed the new demand into the current plan." },
+      { code:"4", title:"Evaluate alternatives", meta:"Decision: Changes Agreed?", body:"Alternative plan priorities are evaluated to embed the new demand; if changes aren't agreed, the loop repeats." },
+      { code:"5", title:"Leadership review", meta:"Governance meeting", body:"NW Director & Leadership review and agree on plan changes at LT + CNO level.", governance:true },
+      { code:"6", title:"Submit updated plan", meta:"CNO lane", body:"The updated plan is submitted to the local market." },
+      { code:"7", title:"Consult Local ExCo", meta:"Governance meeting", body:"The updated plan is consulted with the Local Executive Committee.", governance:true },
+      { code:"8", title:"Inform leadership", meta:"NW Director & Leadership", body:"Vertical Directors and the NW Director are informed of the agreed changes." },
+      { code:"9", title:"Submit to Finance", meta:"Demand & Planning", body:"The updated plan, including KPIs, is submitted to Finance." },
+    ]
+  },
+  monthly:{
+    label:"Monthly Reporting",
+    intro:"A separate, SAP/BPT-driven financial reporting cadence — distinct from the strategic KPI process. Two flavours run every month: Pre-Closure and Closure.",
+    io:{
+      inputs:[
+        "WBS list from the Network Market Partner",
+        "SAP data extract for the month, mapped to the BPT forecast",
+      ],
+      outputs:[
+        "Vertical Pre-Closure Report for all markets (Pre-Closure)",
+        "Network Consolidated Financial View by Market and Vertical (Closure)",
+      ],
+    },
+    steps:[
+      { code:"1", title:"Provide WBS list", meta:"NMP · 15th calendar day (Pre-Closure) / last 2 days (Closure)", body:"The Network Market Partner sends the list of Work Breakdown Structure items to BP&A. If the deadline falls on a weekend or Monday, it moves to the preceding Friday." },
+      { code:"2", title:"Extract SAP data", meta:"NMP + BP&A", body:"SAP data is extracted for the month and mapped to all verticals according to the BPT forecast." },
+      { code:"3", title:"Analyse & forecast close", meta:"NMP", body:"NMP analyses the month's pre-closure report and forecasts how each department will close the month, with full reasons for any deviation." },
+      { code:"4", title:"Closure meeting (Closure flow only)", meta:"Vertical SPOCs · Governance meeting", body:"For month-end closure, a meeting justifies any deviation in detail and proposes remediation. If not aligned, comments and re-planning loop back before proceeding.", governance:true },
+      { code:"5", title:"Consolidate & publish", meta:"NMP", body:"NMP consolidates the report and publishes the snapshot to verticals and BP&A." },
+      { code:"6", title:"Align vertical view", meta:"BP&A", body:"BP&A produces the aligned vertical view. For SDD, DCE and FAE verticals only, an 'Enhanced Reports Alignment' exception requires extra manual commentary to close known status-report gaps." },
+      { code:"7", title:"Publish the consolidated view", meta:"Planning communities", body:"Pre-Closure ends in a Vertical Pre-Closure Report for all markets; Closure ends in the official Network Consolidated Financial View by Market and Vertical." },
+    ]
+  }
+};
+
+/* ===== BPMN-style swimlane diagrams: NEP / LRP / DB / CAR =====
+   Reconstructed to match the original source swimlane diagrams: same lane sets, same step
+   numbering, and the same parallel (multi-lane) steps and dual gateways shown in the source.
+   type: start | end | task | gov (governance meeting) | mile (milestone) | gate (exclusive gateway)
+*/
+const BPMN_DIAGRAMS = {
+
+  nep:{
+    label:"NEP",
+    title:"Network Evolution Plan — Process Flow",
+    caption:"The strategic layer: sets 3-year ambition and priorities with each market's CNO/CEO. Runs May/June through beginning of October.",
+    io:{
+      inputs:[
+        "Strategic pre-guidance KPIs (June) and full tech priorities (September)",
+        "Traffic forecast for all markets, published June by Capacity Engineering",
+        "Prior LRP baseline (Budget gate G0)",
+        "Commercial demand from BEM / business units",
+      ],
+      outputs:[
+        "CNO market presentation deck",
+        "NW Rollout Strategy & high-level 3-year plan, approved per market",
+        "Final NEP plan captured into Budget gate G4 — the baseline for DB/LRP",
+        "G3 CNO-review action list",
+      ],
+    },
+    lanes:["NW Director & NW Leadership Team","CNO","Engagem. Executives","Demand & Planning","Market CEO","NW Fin. BPR & local controller","NW Architect","NW Funct. Budget SPOC"],
+    nodes:[
+      { id:"s", lane:6, col:0, type:"start", label:"May/June", detail:{ owner:"—", desc:"The annual NEP cycle opens." } },
+      { id:"n1", lane:6, col:1, type:"task", label:"1. Provide strategic pre-guidance", detail:{ owner:"NW Architect", desc:"Strategic pre-guidance for the Network is issued as the reference point the whole cycle builds from." } },
+      { id:"n2", lane:3, col:2, type:"task", label:"2. Collect demand", detail:{ owner:"Demand & Planning", desc:"Traffic, service, business priorities and financial guidelines are collected from markets and business functions, VF NW functions, and VF Digital and IT." } },
+      { id:"n3a", lane:1, col:3, type:"task", label:"3. Market Analysis & Forecasting", detail:{ owner:"CNO", desc:"Coverage, capabilities and performance of competitors are analysed." } },
+      { id:"n3b", lane:2, col:3, type:"task", label:"3. Scenarios Definition", detail:{ owner:"Engagem. Executives", desc:"Scenarios are defined based on VF Strategy, Local Priorities and Group guidance — the Access Rollout Plan such as technologies, volumes, refarming strategy, capacity evolution and the Engineering evolution plan." } },
+      { id:"n4a", lane:3, col:4, type:"task", label:"4. High-Level Cost evaluation", detail:{ owner:"Demand & Planning (parallel: NW Fin. BPR, NW Funct. Budget SPOC)", desc:"High-level cost evaluation to implement the plan — unitary costs for Access rollout, Innovation, and BAU projects analysis. Runs in parallel across three lanes." } },
+      { id:"n4b", lane:5, col:4, type:"task", label:"4. High-Level Cost evaluation", detail:{ owner:"NW Fin. BPR & local controller", desc:"Same high-level cost evaluation, carried out in parallel by NW Finance." } },
+      { id:"n4c", lane:7, col:4, type:"task", label:"4. High-Level Cost evaluation", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same high-level cost evaluation, carried out in parallel by the NW Function Budget SPOC." } },
+      { id:"n5a", lane:3, col:5, type:"task", label:"5. Review vs business priorities", detail:{ owner:"Demand & Planning (parallel: NW Fin. BPR, NW Funct. Budget SPOC)", desc:"Review NEP against business priorities & VF Strategy, in parallel across three lanes, before governance review." } },
+      { id:"n5b", lane:5, col:5, type:"task", label:"5. Review vs business priorities", detail:{ owner:"NW Fin. BPR & local controller", desc:"Same review, carried out in parallel by NW Finance." } },
+      { id:"n5c", lane:7, col:5, type:"task", label:"5. Review vs business priorities", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same review, carried out in parallel by the NW Function Budget SPOC." } },
+      { id:"n6", lane:0, col:6, type:"gov", label:"6. Review & agree the NEP", detail:{ owner:"NW Director & NW Leadership Team", desc:"Leadership reviews the NEP for strategic fit and affordability." } },
+      { id:"gw1", lane:0, col:7, type:"gate", label:"Agreed?", detail:{ owner:"NW Director & Leadership / CNO", desc:"Exclusive gateway: “NEP agreed at LT and CNO level?” If not agreed, it loops back to step 5 (review vs business priorities); if agreed, it proceeds to market presentation." } },
+      { id:"n7", lane:4, col:8, type:"task", label:"7. Present with Local ExCo", detail:{ owner:"Market CEO", desc:"The agreed NEP is presented to the market's Local Executive Committee." } },
+      { id:"n8", lane:4, col:9, type:"task", label:"8. Identify challenges & actions", detail:{ owner:"Market CEO", desc:"Any challenges raised by the Local ExCo are logged with proposed actions." } },
+      { id:"n9", lane:0, col:10, type:"task", label:"9. Inform NW Leadership & Director", detail:{ owner:"NW Director & NW Leadership Team", desc:"NW Leadership and the NW Director are informed of the outcome." } },
+      { id:"n10", lane:4, col:11, type:"mile", label:"10. Approve rollout strategy", detail:{ owner:"Market CEO", desc:"Beginning of October — the market CEO approves the Network Rollout Strategy and the high-level 3-year plan per market. This becomes the baseline input into the DB/LRP diagram." } },
+      { id:"e", lane:0, col:12, type:"end", label:"11. Feedback to Architecture", detail:{ owner:"NW Director & NW Leadership Team", desc:"Feedback on alignment on Strategy is provided to the NW Architecture Team, closing the NEP cycle." } },
+    ],
+    edges:[
+      {from:"s",to:"n1"},{from:"n1",to:"n2"},{from:"n2",to:"n3a"},{from:"n2",to:"n3b"},
+      {from:"n3a",to:"n4a"},{from:"n3b",to:"n4a"},{from:"n2",to:"n4b"},{from:"n2",to:"n4c"},
+      {from:"n4a",to:"n5a"},{from:"n4b",to:"n5b"},{from:"n4c",to:"n5c"},
+      {from:"n5a",to:"n6"},{from:"n5b",to:"n6"},{from:"n5c",to:"n6"},
+      {from:"n6",to:"gw1"},
+      {from:"gw1",to:"n5a",label:"No",loop:true},
+      {from:"gw1",to:"n7",label:"Yes"},
+      {from:"n7",to:"n8"},{from:"n8",to:"n9"},{from:"n9",to:"n10"},{from:"n10",to:"e"},
+    ]
+  },
+
+  dblrp:{
+    label:"DB / LRP",
+    title:"Annual DB/LRP Plan — Process Flow",
+    caption:"One continuous annual cycle: refining the plan (M0–M5) through approval and financial submission (M6–M9). Runs mid-October through beginning of March.",
+    io:{
+      inputs:[
+        "NEP-approved projects, high-level cost & Tech Guidance",
+        "Updated traffic demand and financial / CAPEX envelope",
+        "Commercial priorities per project, across all NW functions",
+        "Prior rolling-forecast scenarios (LS DB, LS 0+12, LS 2+10, LS 5+7)",
+      ],
+      outputs:[
+        "Detailed CAPEX & OPEX cost plan per function (ND, NSE, NO, NQ, CF)",
+        "E2E integrated CAPEX plan per market — priorities, benefits, risks, KPIs",
+        "Market-approved plan, handed to the Market Plan Handshake and CAR",
+        "Updated technical KPI targets submitted to OHP / Finance",
+      ],
+    },
+    lanes:["NW Director & NW Leadership Team","CNO","Engagem. Executives","Demand & Planning","Market CEO","NW Fin. BPR & local controller","NW Funct. Budget SPOC","Digital & IT Leadership Team"],
+    nodes:[
+      { id:"s", lane:5, col:0, type:"start", label:"M0", detail:{ owner:"—", desc:"Mid October — the DB/LRP refinement cycle opens." } },
+      { id:"n1", lane:5, col:1, type:"task", label:"1. Share the calendar", detail:{ owner:"NW Fin. BPR & local controller", desc:"Share the calendar for DB/LRP with major milestones including CEO review and submission deadlines." } },
+      { id:"n2", lane:3, col:2, type:"task", label:"2. Share NEP outputs & guidance", detail:{ owner:"Demand & Planning", desc:"Share Network projects and high-level cost from NEP and other Strategic Boards / Rollout Board, plus Tech Guidance." } },
+      { id:"n3", lane:3, col:3, type:"task", label:"3. Collect updated demand & envelope", detail:{ owner:"Demand & Planning", desc:"Collect updated traffic demand, financial envelope and commercial priorities per project across all VF NW functions." } },
+      { id:"n4a", lane:3, col:4, type:"task", label:"4. Prepare cost plan per function", detail:{ owner:"Demand & Planning (parallel: NW Funct. Budget SPOC)", desc:"Prepare the NW DB/LRP detailed cost plan for CAPEX & OPEX considering the Financial Envelope and Market priorities, per Function: ND, NSE, NO, NQ, CF." } },
+      { id:"n4b", lane:6, col:4, type:"task", label:"4. Prepare cost plan per function", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same cost-plan preparation, carried out in parallel by the NW Function Budget SPOC." } },
+      { id:"n5a", lane:3, col:5, type:"task", label:"5. E2E integrate CAPEX per market", detail:{ owner:"Demand & Planning (parallel: NW Funct. Budget SPOC)", desc:"E2E integrate the NW DB/LRP CAPEX Plan per market, including priorities, benefits, risks and KPIs; prepare E2E executive material for the CNO." } },
+      { id:"n5b", lane:6, col:5, type:"task", label:"5. E2E integrate CAPEX per market", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same E2E integration, carried out in parallel by the NW Function Budget SPOC." } },
+      { id:"n6a", lane:2, col:6, type:"task", label:"6. Optimize for risk & KPI impact", detail:{ owner:"Engagem. Executives (parallel: NW Funct. Budget SPOC)", desc:"Optimize the plan considering risk and KPI impact." } },
+      { id:"n6b", lane:6, col:6, type:"task", label:"6. Optimize for risk & KPI impact", detail:{ owner:"NW Funct. Budget SPOC", desc:"Same optimization, carried out in parallel by the NW Function Budget SPOC." } },
+      { id:"n7", lane:2, col:7, type:"gov", label:"7. Prioritize & agree market plan", detail:{ owner:"Engagem. Executives / NW Funct. Budget SPOC", desc:"Prioritize and agree the market plan against commercial priorities, Demand, VF Strategy and the financial envelope. Between M2 and M4, governance is optionally CNO-driven with the Local ExCo, or EE SPOC-driven within each network domain." } },
+      { id:"n8", lane:0, col:8, type:"gov", label:"8. Review & agree the DB/LRP plan", detail:{ owner:"NW Director & NW Leadership Team", desc:"Leadership reviews and agrees the DB/LRP plan — the formal milestones calendar names this the “Alberto and Leadership Team Sign-Off” (M4)." } },
+      { id:"gw1", lane:0, col:9, type:"gate", label:"Agreed?", detail:{ owner:"NW Director & Leadership / CNO", desc:"“Plan agreed at LT + CNO?” If not agreed, it loops back to step 7 (Prioritize & agree market plan). If agreed, it proceeds to the target-change check." } },
+      { id:"gw2", lane:0, col:10, type:"gate", label:"Target changed?", detail:{ owner:"NW Director & Leadership", desc:"If the underlying target changed, the whole cycle restarts from M0 (step 1). If not, the plan proceeds to market submission." } },
+      { id:"n9", lane:1, col:11, type:"task", label:"9. Submit to Local Market", detail:{ owner:"CNO", desc:"The agreed plan is submitted to the local market." } },
+      { id:"n10", lane:1, col:12, type:"gov", label:"10. Discuss with Local ExCo", detail:{ owner:"CNO", desc:"Plan discussion with the Local Executive Committee." } },
+      { id:"n10b", lane:4, col:12, type:"gov", label:"Discuss with Local ExCo", detail:{ owner:"Market CEO", desc:"The market CEO participates in the same Local ExCo discussion, in parallel with CNO." } },
+      { id:"n10c", lane:5, col:12, type:"gov", label:"Discuss with Local ExCo", detail:{ owner:"NW Fin. BPR & local controller", desc:"NW Finance participates in the same Local ExCo discussion, in parallel." } },
+      { id:"n11", lane:1, col:13, type:"task", label:"11. Assess & embed changes", detail:{ owner:"CNO / Market CEO / NW Fin. BPR", desc:"Assess and embed changes into the plan based on CEO priorities." } },
+      { id:"n12", lane:0, col:14, type:"task", label:"12. Inform NW Leadership Team", detail:{ owner:"NW Director & NW Leadership Team", desc:"NW Leadership Team is informed of the finalised plan." } },
+      { id:"n13", lane:4, col:15, type:"mile", label:"13. Plan approved at Market Level", detail:{ owner:"Market CEO", desc:"Mid December (M5) — the plan is approved at market level, feeding directly into the Market Plan Handshake (M6) below." } },
+      { id:"n14", lane:0, col:16, type:"gov", label:"14. Market plan handshake", detail:{ owner:"NW Director & NW Leadership Team / Digital & IT Leadership Team", desc:"Market plan handshake per Function (NW and IT & Digital), M6, mid-January." } },
+      { id:"gw3", lane:0, col:17, type:"gate", label:"Agreed?", detail:{ owner:"NW Director & Leadership / Digital & IT Leadership", desc:"If the handshake is agreed, CAR preparation begins directly. If not, alternative scenarios are developed first." } },
+      { id:"n15a", lane:2, col:18, type:"task", label:"15a. Alternative scenarios", detail:{ owner:"Engagem. Executives", desc:"Alternative scenarios are developed when the initial handshake isn't agreed." } },
+      { id:"n15b", lane:3, col:19, type:"gov", label:"15b. CAR material preparation", detail:{ owner:"Demand & Planning / NW Fin. BPR", desc:"CAR material preparation, reviewing input from the market (M7, end January). CAR decks must be submitted by the markets by 11th January — a hard deadline. See the CAR diagram for the full Capital Allocation Review detail." } },
+      { id:"n16", lane:0, col:20, type:"gov", label:"16. CAR Meeting", detail:{ owner:"NW Director & NW Leadership Team", desc:"The Capital Allocation Review meeting runs (M8, early–mid February). Full attendee detail is in the CAR diagram." } },
+      { id:"n17", lane:0, col:21, type:"gov", label:"17. VF CEO Review & Signoff", detail:{ owner:"NW Director & NW Leadership Team", desc:"The VF CEO reviews and signs off the overall Capex/Opex position." } },
+      { id:"n18a", lane:3, col:22, type:"task", label:"18. Submit Technical KPIs", detail:{ owner:"Demand & Planning", desc:"Submission of Technical KPIs to Finance." } },
+      { id:"n18b", lane:5, col:22, type:"task", label:"18. Submit Financial KPIs", detail:{ owner:"NW Fin. BPR & local controller", desc:"Submission of Financial KPIs to Finance, in parallel." } },
+      { id:"e", lane:5, col:23, type:"mile", label:"Final Submission", detail:{ owner:"—", desc:"Beginning of March (M9) — the hard deadline that closes the annual Detailed Budget cycle." } },
+    ],
+    edges:[
+      {from:"s",to:"n1"},{from:"n1",to:"n2"},{from:"n2",to:"n3"},
+      {from:"n3",to:"n4a"},{from:"n3",to:"n4b"},
+      {from:"n4a",to:"n5a"},{from:"n4b",to:"n5b"},
+      {from:"n5a",to:"n6a"},{from:"n5b",to:"n6b"},
+      {from:"n6a",to:"n7"},{from:"n6b",to:"n7"},
+      {from:"n7",to:"n8"},{from:"n8",to:"gw1"},
+      {from:"gw1",to:"n7",label:"No",loop:true},
+      {from:"gw1",to:"gw2",label:"Yes"},
+      {from:"gw2",to:"n1",label:"Target changed",loop:true},
+      {from:"gw2",to:"n9",label:"No"},
+      {from:"n9",to:"n10"},{from:"n9",to:"n10b"},{from:"n9",to:"n10c"},
+      {from:"n10",to:"n11"},{from:"n10b",to:"n11"},{from:"n10c",to:"n11"},
+      {from:"n11",to:"n12"},{from:"n12",to:"n13"},
+      {from:"n13",to:"n14"},{from:"n14",to:"gw3"},
+      {from:"gw3",to:"n15a",label:"No"},{from:"n15a",to:"n15b"},
+      {from:"gw3",to:"n15b",label:"Yes"},
+      {from:"n15b",to:"n16"},{from:"n16",to:"n17"},{from:"n17",to:"n18a"},{from:"n17",to:"n18b"},
+      {from:"n18a",to:"e"},{from:"n18b",to:"e"},
+    ]
+  },
+
+  car:{
+    label:"CAR",
+    title:"Capital Allocation Review (CAR / NCAR)",
+    caption:"One review board process, covering both the annual Capital Allocation Review (M7–M8) and in-life Network Capital Allocation Review decisions for new or changed demand.",
+    io:{
+      inputs:[
+        "Market-approved DB/LRP plan, after the Market Plan Handshake (M6)",
+        "CAR decks from every market — hard deadline: 11 January",
+        "Monthly rolling forecast, for in-flight work",
+        "New, impact-assessed demand from the Front Door",
+      ],
+      outputs:[
+        "Approved annual CAPEX/OPEX plan & budget targets per market",
+        "VF CEO review and sign-off on the overall Capex/Opex position",
+        "Funding-mobilisation trigger into the Spend Approval Board / NPRB business case",
+      ],
+    },
+    lanes:["VF Technology Director / CFO","NW Director & NW Leadership Team","Demand & Planning / NW Fin. BPR","Local CEO/CFO & local NW/D&IT Directors"],
+    nodes:[
+      { id:"inputs", lane:2, col:0, type:"task", label:"New demand & rolling forecast", detail:{ owner:"Demand & Planning / Finance", desc:"Two standing inputs feed every CAR cycle: the Demand Front Door process (new demand that has been validated, impact assessed and prioritised) and the Monthly Rolling Forecast process (the latest view from NLT areas of forecast, to complete in-flight work)." } },
+      { id:"s", lane:3, col:1, type:"start", label:"Handshake done", detail:{ owner:"—", desc:"Entry point: the market plan handshake between NW and IT & Digital functions has just completed (M6)." } },
+      { id:"gwh", lane:3, col:2, type:"gate", label:"Agreed?", detail:{ owner:"Local CEO/CFO & local NW/D&IT Directors", desc:"If the handshake wasn't agreed, alternative scenarios are built before CAR material is prepared." } },
+      { id:"alt", lane:2, col:3, type:"task", label:"Alternative scenarios", detail:{ owner:"Demand & Planning", desc:"Alternative funding/scope scenarios are developed to resolve disagreement before CAR." } },
+      { id:"n_prep", lane:2, col:4, type:"gov", label:"CAR Preparation", detail:{ owner:"Demand & Planning / NW Fin. BPR", desc:"Document all impacts to the baseline plan, decisions needed and prioritisation calls. CAR decks must be submitted by the markets by 11th January — a hard deadline. Standard CAR/NCAR content template is used to capture the NLT Sponsor's requested decisions." } },
+      { id:"n_agenda", lane:2, col:5, type:"task", label:"CAR Agenda & Pre-Read", detail:{ owner:"Demand & Planning / NW Fin. BPR", desc:"Standard CAR pack and agenda sent to all attendees ahead of the meeting." } },
+      { id:"n_meeting", lane:1, col:6, type:"gov", label:"CAR Meeting", detail:{ owner:"NW Director & NW Leadership Team", desc:"Attendees: VF Technology Director/CFO, VF Networks/D&IT directors, VF Technology Finance, Local CEO/CFO, and local NW/D&IT directors (early–mid February for the annual cycle; convened as needed for in-life NCAR decisions). Considers all plan impacts, decisions and prioritisation — new demand, prioritisation, capital budget allocation and resource impact." } },
+      { id:"gw_dec", lane:1, col:7, type:"gate", label:"Decisions", detail:{ owner:"NW Director & NW Leadership Team", desc:"The board reviews and considers all proposed changes to plan and their impact, producing approvals, rejections and actions." } },
+      { id:"n_signoff", lane:0, col:8, type:"gov", label:"VF CEO Review & Signoff", detail:{ owner:"VF Technology Director / CFO", desc:"Network CEO meetings with the VF Technology director, CFO and Finance controllers align the overall Capex/Opex view; separate 1:1 meetings between the Network CEO/CFO and Local CEO/CFO align local financials." } },
+      { id:"e", lane:1, col:9, type:"end", label:"Funding Mobilisation", detail:{ owner:"—", desc:"The signed-off plan feeds directly into Final Submission in the DB/LRP diagram. Any resulting change to the plan must also follow the NPRB (Network Project Review Board) Business Case Process to authorise SAP funds loading for new demand or in-flight funding uplifts — all changes to the business case require NPRB approval." } },
+    ],
+    edges:[
+      {from:"inputs",to:"n_prep"},
+      {from:"s",to:"gwh"},
+      {from:"gwh",to:"alt",label:"No"},{from:"alt",to:"n_prep"},
+      {from:"gwh",to:"n_prep",label:"Yes"},
+      {from:"n_prep",to:"n_agenda"},{from:"n_agenda",to:"n_meeting"},
+      {from:"n_meeting",to:"gw_dec"},
+      {from:"gw_dec",to:"n_signoff",label:"Approved"},
+      {from:"n_signoff",to:"e"},
+    ]
+  },
+
+  demand:{
+    label:"Demand",
+    title:"Networks Demand Front Door — Work Flow Process",
+    caption:"How a raw demand becomes an approved, funded delivery. SLA for impact assessment: Small demand 3 weeks, Medium demand 6 weeks, Large demand 3 months.",
+    io:{
+      inputs:[
+        "Raw demand request (Type 1–4) via the Single Front Door",
+        "Impact assessment: Consultancy, DIA, or a VROM quote",
+        "NW budget availability check & Market Sponsor priority",
+      ],
+      outputs:[
+        "Demand Board approval or rejection decision",
+        "Approved impact assessment, handed to Integrated Delivery's own G0",
+        "Capital-impacting demand routed into CAR / NCAR and NPRB approval",
+      ],
+    },
+    lanes:["Demand Requestor","Demand Manager","Functions","Consultant","Demand Board"],
+    nodes:[
+      { id:"s", lane:0, col:0, type:"start", label:"Demand submitted", detail:{ owner:"Demand Requestor", desc:"A new demand is submitted through the Networks Demand Front Door." } },
+      { id:"n1", lane:1, col:1, type:"task", label:"Demand reviewed", detail:{ owner:"Demand Manager", desc:"The Demand Manager reviews the submitted demand." } },
+      { id:"n2", lane:1, col:2, type:"gate", label:"Route?", detail:{ owner:"Demand Manager", desc:"Function allocation for impact assessment — the demand is routed to one of three assessment paths: Consultancy, DIA (Detailed Impact Assessment), or VROM (quote-based estimate)." } },
+      { id:"cons", lane:3, col:3, type:"task", label:"SME consultant assigned", detail:{ owner:"Consultant", desc:"Consultancy path: a subject-matter-expert consultant is assigned. See the Networks Consultancy L3 process for the full detail — Demand Submission → Demand review → SME consultant assigned → Consultancy provided → Case resolved." } },
+      { id:"dia", lane:2, col:3, type:"task", label:"Detailed impact assessment", detail:{ owner:"Functions", desc:"DIA path: functions and departments capture risks, cost and resource assessment. See the Detailed Impact Assessment L3 process for the full multi-department detail." } },
+      { id:"vrom", lane:2, col:4, type:"task", label:"Initial impact assessment (VROM)", detail:{ owner:"Functions", desc:"VROM path: a Vendor Rough Order of Magnitude quote-based estimate is collated. See the Networks VROM L3 process for the full detail." } },
+      { id:"partner", lane:3, col:6, type:"end", label:"Partnership process", detail:{ owner:"Consultant / Partnership team", desc:"The consultancy engagement is handed to the Partnership team's process (TEF-triggered)." } },
+      { id:"quote", lane:1, col:5, type:"task", label:"Quote summary created", detail:{ owner:"Demand Manager", desc:"A quote summary is created from the VROM estimate." } },
+      { id:"n3", lane:1, col:6, type:"task", label:"Impact assessment produced", detail:{ owner:"Demand Manager", desc:"The impact assessment is produced, drawing on the DIA and/or VROM outputs." } },
+      { id:"n4", lane:1, col:7, type:"task", label:"Impact assessment approved", detail:{ owner:"Demand Manager", desc:"The impact assessment is approved internally before board review." } },
+      { id:"gwq", lane:0, col:8, type:"gate", label:"Quote OK?", detail:{ owner:"Demand Requestor", desc:"Quote accepted, rejected or challenged. If not accepted, the quote is returned to the user, valid for a fixed number of days, and the cycle can restart." } },
+      { id:"n5", lane:4, col:8, type:"gov", label:"Demand review board", detail:{ owner:"Demand Board", desc:"The demand and its approved impact assessment are reviewed by the Demand Review Board." } },
+      { id:"n6", lane:4, col:9, type:"mile", label:"Demand approved", detail:{ owner:"Demand Board", desc:"The demand is approved, internally or externally. Once approved, larger or capital-impacting demand may proceed through CAR/NCAR and NPRB approval before funding is released — see the CAR diagram." } },
+      { id:"e", lane:4, col:10, type:"end", label:"Delivery", detail:{ owner:"—", desc:"The approved demand transitions into delivery." } },
+    ],
+    edges:[
+      {from:"s",to:"n1"},{from:"n1",to:"n2"},
+      {from:"n2",to:"cons",label:"Consultancy"},
+      {from:"n2",to:"dia",label:"DIA"},
+      {from:"n2",to:"vrom",label:"VROM"},
+      {from:"cons",to:"partner"},
+      {from:"vrom",to:"quote"},
+      {from:"dia",to:"n3"},{from:"quote",to:"n3"},
+      {from:"n3",to:"n4"},
+      {from:"n4",to:"gwq"},
+      {from:"gwq",to:"n1",label:"Challenged",loop:true},
+      {from:"n4",to:"n5"},
+      {from:"n5",to:"n6"},{from:"n6",to:"e"},
+    ]
+  },
+};
+
+/* Roles */
+const ROLES = [
+  { name:"Demand Assurance Manager (DAM)", pillar:"Demand & Governance", tag:"blue", tagline:"Collects, triages and dispatches every in-country demand.", full:"Accountable for the triage and completion of impact assessment from NW Vertical teams. Responsible for submission and representation at the Demand Approval Board for the go/no-go decision, and for demands transitioning cleanly into Delivery Teams." },
+  { name:"Governance SPOC", pillar:"Demand & Governance", tag:"blue", tagline:"Appointed per market to run how governance operates locally.", full:"Accountable for how the market operates; supports and works closely with all stakeholders within the market on governance matters." },
+  { name:"Market E2E Planner", pillar:"Planning", tag:"red", tagline:"Leads 3-year strategic planning and DB/LRP for the market — gathers KPI targets directly on the OHP tool.", full:"Drives CAPEX plan harmonization and consolidation across VF Network functions, engages Finance on OPEX optimization, and supports the in-market CNO during challenge allocation. Explicitly gathers, submits, and updates technical KPI targets on the OHP tool — this is the exact workflow SNIP is built to replace." },
+  { name:"Traffic Modelling Engineer", pillar:"Planning", tag:"red", tagline:"Turns commercial demand into technical capacity requirements.", full:"Owns the handover of commercial demand from the Network Business Engagement Manager, translating it into vertical/technical KPIs and dimensioning criteria driven by traffic growth, with feedback on RAG status." },
+  { name:"Network Business Engagement Manager (NW BEM)", pillar:"Planning", tag:"red", tagline:"The bridge between the Planning team and Market Business units.", full:"Leads interlock alignment between Network and Market priorities, supports the CNO evaluating in-year strategic initiatives, and manages the Demand Forecast collated from business units via the demand front door." },
+  { name:"NW Vertical Budget SPOC", pillar:"Planning", tag:"red", tagline:"The vertical's single voice in the planning lifecycle.", full:"Leads NW CAPEX/OPEX business-case drafting for the vertical, engaging the Market E2E Planner and Finance to build a detailed plan against NW strategy and financial guidelines." },
+  { name:"Strategic Planner", pillar:"Planning", tag:"red", tagline:"Evaluates the most strategic in-year initiatives.", full:"Supports technical and cost evaluation of the most strategic initiatives during the year, and supports market and cost optimization based on the CAPEX plan." },
+  { name:"Network Planning Specialist", pillar:"Planning", tag:"red", tagline:"Sets and coordinates the budget planning timeline.", full:"Leads the Budget Process & Analysis (BP&A) team; consolidates the 3-year plan and annual/actual reconciliation; owns the Central Dashboard publication." },
+  { name:"Network Market Partner (NMP)", pillar:"Planning", tag:"red", tagline:"Coordinates across verticals for one aligned solution — often across several markets at once.", full:"Leads in-market planning through G0–G2, aligns market input into project financials and KPIs, and interlocks the technical solution definition with all impacted verticals to keep DB/LRP costing consistent. Only 5 named individuals cover all 17 markets today." },
+  { name:"Engineering Initiative Manager (EIM)", pillar:"Integrated Delivery", tag:"teal", tagline:"Owns project initiation between G0 and G2.", full:"Coordinates with the MDM to collect the request and set up the project team to produce the High Level Plan and VROM cost estimation; enters and maintains initiatives in the PPM tool." },
+  { name:"Engineering Delivery Manager (EDM)", pillar:"Integrated Delivery", tag:"teal", tagline:"Owns delivery of a specific project post-G2.", full:"Accountable for the delivery of a specific project including time, cost, and quality — the counterpart to the EIM after funding is approved." },
+  { name:"Market Delivery Manager (MDM)", pillar:"Integrated Delivery", tag:"teal", tagline:"The single focal point for all delivery in a market.", full:"Accountable for end-to-end delivery of all commercial and technical projects in the market. Resolves resourcing issues, change requests, prioritization and escalations for local projects; also a PPM-tool data owner and the trigger point for bottom-up budget challenge allocation to the NMP." },
+  { name:"Solution Authority", pillar:"Integrated Delivery", tag:"teal", tagline:"Custodian of end-to-end technical coherence.", full:"Coordinates and facilitates discussion among Vertical Technical Leaders to guarantee coherence of the end-to-end design, and acts as final decision point on solution-design conflicts." },
+  { name:"Mobilization & Spend Approval Board", pillar:"Boards", tag:"grey", tagline:"Reviews and approves funding lines.", full:"Composed of the Governance SPOC, Planning SPOCs, Executive Sponsors and Finance. Leads assessment/review of the funding line and approval of the sanction or budget line item." },
+  { name:"In-year Change Management Board", pillar:"Boards", tag:"grey", tagline:"Approves funding changes mid-year.", full:"Same composition as the Mobilization & Spend Approval Board, focused specifically on in-year change requests." },
+  { name:"Demand Approval Board", pillar:"Boards", tag:"grey", tagline:"Approves or rejects demand and settles prioritisation.", full:"Composed of the CNO, Head of Vertical Demand Team, Head of Function/vertical(s), the combined impact-assessment representative, and the requester's Finance representative." },
+];
+
+/* Stakeholders */
+const STAKEHOLDERS = [
+  ["UK","Alexandra Sajin","James Taylor","Andrea Dona","Max Taylor"],
+  ["Italy","TBD","Marco De Luca","Marco Zangani","Aldo Bisio"],
+  ["Germany","Alfonso Gomez","Olaf Dietrich","Tanja Richter","Hannes Ametsreiter"],
+  ["Albania","Keti Memushi","Genc Hoxha","Gentian Bajraktari","Katia Stathaki"],
+  ["Portugal","Cristina Pereira","Patricia Ballester","Paulino Correa","Mário Vaz"],
+  ["Romania","Robert Mihaie","Genc Hoxha","Nicolae Tula","Achilleas Kanaris"],
+  ["Czech Republic","Eva Kchelerova","Genc Hoxha","Miroslav Bula","Petr Dvořák"],
+  ["Ireland","Niall O'Connor","James Taylor","Sheila Kavanagh","Amanda Nelson"],
+  ["Greece","Giorgos Tomaropoulos","Marco De Luca","Niko Plevris","Haris Broumidis"],
+  ["Turkey","Ekin Bektas","Asici Ahmet","Yago Lopez","Engin Aksoy"],
+];
+
+/* KPI catalog */
+const KPIS = [
+  ["Network Engineering","International","Cost/Gbps for internet transit."],
+  ["Network Engineering","Radio","Cost of engineering activities per node, where engineering activities are the sum of planning, engineering, optimization, testing and delivery via the MAE team (internal or external), and nodes are 2G+3G+4G plus 5G, including frequency upgrades."],
+  ["Network Engineering","Core","Cost of engineering activities per node via VCE and DCE teams, where nodes are all voice and data core nodes, physical or virtual."],
+  ["Network Engineering","National transport","Cost of engineering activities per node via the National TTE team, where nodes are all optical and IP nodes."],
+  ["Network Development","Unitary costs","Implementation services cost versus number of rollout-weighted activities. Current focus is mobile unitary cost benchmarking; fixed-line and labour cost are planned enhancements."],
+  ["Customer Fulfilment","Unitary costs — Repair","Tickets divided by costs, where tickets are Layer 3 & 4 tickets plus 2nd-level field tickets, and costs are the sum of repair-related OPEX, CAPEX and ODC."],
+  ["Customer Fulfilment","Unitary costs — Provide","Installations divided by costs, where costs are driven by technician volumes or gross adds."],
+  ["Network Operations","Productivity","Tickets, network changes, network elements, cells or traffic per NOC FTE, per the business case."],
+  ["Network Operations","Costs","Cost per ticket and per new network change."],
+  ["Network Operations","Digital","Percentage of end-to-end tickets that are automated."],
+  ["Network Operations","Quality","Year-on-year incident improvement and year-on-year MTTR improvement."],
+];
+
+/* Glossary */
+const GLOSSARY = [
+  ["BAU","Business as Usual"],
+  ["BEM","Business Engagement Manager"],
+  ["BC","Budget / Business Case"],
+  ["BPA / BP&A","Budget Process & Analysis"],
+  ["BPT","Business Planning Tool — the system behind budget gates and the DB Template"],
+  ["BRM","Business Relationship Manager"],
+  ["CAPEX","Capital Expenditure"],
+  ["CAR","Capital Allocation Review"],
+  ["CF","Customer Fulfilment"],
+  ["CNO","Chief Network Officer (per market)"],
+  ["DAM","Demand Assurance Manager"],
+  ["DB","Detailed Budget"],
+  ["DGT","Demand & Governance Team"],
+  ["DLM","Delivery Management (process step-code prefix, e.g. DLM.01)"],
+  ["EDM","Engineering Delivery Manager"],
+  ["EE","Engagement Executive"],
+  ["EIM","Engineering / Engagement Initiative Manager (naming has drifted across sources)"],
+  ["FAE","Feasibility Assessment"],
+  ["FOA","First Office Application"],
+  ["HFM","Hyperion Financial Management — the financial chart-of-accounts layer behind OHP"],
+  ["HLD","High Level Design"],
+  ["IDSM","Integrated Delivery & Sourcing Management"],
+  ["LLD","Low Level Design"],
+  ["LRP","Long Range Plan"],
+  ["MDM","Market Delivery Manager"],
+  ["NCAR","Network Change Approval Review"],
+  ["ND","Network Development"],
+  ["NEP","Network Evolution Plan"],
+  ["NMP","Network Market Partner"],
+  ["NO","Network Operations"],
+  ["NPDDT","Network Planning, Demand, Delivery & Transformation"],
+  ["NPRB","Network Project Review Board"],
+  ["NQ","Network Quality"],
+  ["NRB","Network Rollout Board"],
+  ["NSE","Network Strategy & Engineering"],
+  ["OHP","Oracle Hyperion Planning — the on-premise system SNIP replaces"],
+  ["OPEX","Operational Expenditure"],
+  ["PPM","Project & Portfolio Management tool"],
+  ["RRHH","Human Resources (Spanish: Recursos Humanos)"],
+  ["SNIP","Strategic Network Intelligent Planning — the platform this guide supports"],
+  ["SPOC","Single Point of Contact"],
+  ["TE&CE","Traffic Engineering & Capacity Engineering"],
+  ["UAT","User Acceptance Test"],
+  ["VOIS","Vodafone Intelligent Solutions — the shared services organisation"],
+  ["VROM","Vendor Rough Order of Magnitude — an early cost estimate"],
+  ["WBS","Work Breakdown Structure"],
+];
+
+/* ============================= RENDER ============================= */
+
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+
+/* Small inline icon set — stroke style, matching the reference design system's icon badges */
+const ICON_PATHS = {
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>',
+  layers:'<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"></path><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"></path><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"></path>',
+  route:'<circle cx="6" cy="19" r="3"></circle><circle cx="18" cy="5" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>',
+  coins:'<circle cx="8" cy="8" r="6"></circle><path d="M18.09 10.37A6 6 0 1 1 10.34 18"></path><path d="M7 6h1v4"></path><path d="m16.71 13.88.7.71-2.82 2.82"></path>',
+  inbox:'<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>',
+  gauge:'<path d="m12 14 4-4"></path><path d="M3.34 19a10 10 0 1 1 17.32 0"></path>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" x2="4" y1="22" y2="15"></line>',
+  building:'<rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path>',
+  'arrow-right':'<path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>',
+};
+function ICON(name, size){
+  size = size || 18;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name]||''}</svg>`;
+}
+
+/* Input / Output card, shown above every process's flow */
+function ioCardHTML(io){
+  if(!io) return '';
+  return `<div class="io-card">
+    <div class="io-col">
+      <div class="io-label io-in">Inputs</div>
+      <ul>${io.inputs.map(i=>`<li>${i}</li>`).join('')}</ul>
+    </div>
+    <div class="io-col">
+      <div class="io-label io-out">Outputs</div>
+      <ul>${io.outputs.map(o=>`<li>${o}</li>`).join('')}</ul>
+    </div>
+  </div>`;
+}
+
+/* --- Nav: true tabs — one top-level page visible at a time, no cross-section scrolling --- */
+function buildNav(){
+  const nav = document.getElementById('navScroll');
+  NAV.forEach(item=>{
+    const btn = el('button','nav-item', item.label);
+    btn.dataset.section = item.id;
+    btn.addEventListener('click', ()=> goTo(item.id));
+    nav.appendChild(btn);
+  });
+}
+function goTo(id){
+  const target = id==='home' ? document.getElementById('home') : document.getElementById('sec-'+id);
+  document.querySelectorAll('.tab-page').forEach(p=> p.classList.remove('active'));
+  if(target) target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b=> b.classList.toggle('active', b.dataset.section===id));
+  window.scrollTo({top:0});
+}
+
+/* --- Home stats --- */
+function buildStats(){
+  const strip = document.getElementById('statStrip');
+  STATS.forEach(s=>{
+    const c = el('div','stat-cell', `<div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div>`);
+    strip.appendChild(c);
+  });
+}
+
+/* --- Governance --- */
+const GOV_TABS = [
+  { key:"model", label:"Operating model" },
+  { key:"chain", label:"Board chain" },
+  { key:"leadership", label:"Leadership" },
+  { key:"calendar", label:"Meeting calendar" },
+];
+function buildGovernance(){
+  const tabs = document.getElementById('govTabs');
+  GOV_TABS.forEach((t,i)=>{
+    const btn = el('button','tab-btn'+(i===0?' active':''), t.label);
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#govTabs .tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.gov-panel').forEach(p=> p.classList.toggle('active', p.dataset.panel===t.key));
+    });
+    tabs.appendChild(btn);
+  });
+
+  const pg = document.getElementById('pillarGrid');
+  PILLARS.forEach(p=>{
+    const c = el('div','feature-card', `<span class="icon-badge icon-badge-md icon-${p.color}">${ICON(p.icon,20)}</span><h3>${p.t}</h3><p style="margin:0;">${p.d}</p>`);
+    pg.appendChild(c);
+  });
+
+  const chain = document.getElementById('boardChain');
+  BOARD_CHAIN.forEach(b=>{
+    const step = el('div','flow-step'+(b.governance?' governance':''));
+    step.innerHTML = `
+      <div class="rail"><div class="dot">${b.code}</div><div class="line"></div></div>
+      <div class="content">
+        <button class="step-head">
+          <div><div class="step-title">${b.title}</div><div class="step-meta">${b.meta}</div></div>
+          <div class="chev">›</div>
+        </button>
+        <div class="step-body"><p style="margin:0;">${b.body}</p></div>
+      </div>`;
+    step.querySelector('.step-head').addEventListener('click', ()=> step.classList.toggle('open'));
+    chain.appendChild(step);
+  });
+
+  const og = document.getElementById('orgGrid');
+  ORG.forEach(o=>{
+    const c = el('div','quick-card');
+    c.innerHTML = `<span class="icon-badge icon-badge-sm icon-navy" style="margin-right:2px;">${ICON('users',18)}</span><div><div class="t">${o.name}</div><div class="d"><strong style="color:var(--ink);">${o.role}</strong><br>${o.detail}</div></div>`;
+    og.appendChild(c);
+  });
+
+  const mb = document.getElementById('meetingBody');
+  MEETINGS.forEach(m=>{
+    const tr = el('tr','', `<td>${m[0]}</td><td class="soft">${m[1]}</td><td class="soft">${m[2]}</td>`);
+    mb.appendChild(tr);
+  });
+}
+
+/* --- Gate systems --- */
+function buildGates(){
+  const cols = document.getElementById('gateColumns');
+  GATE_SYSTEMS.forEach(sys=>{
+    const col = el('div','gate-col '+sys.cls, `<span class="icon-badge icon-badge-sm icon-${sys.color}" style="margin-bottom:10px;">${ICON(sys.icon,18)}</span><div class="sys-title">${sys.title}</div><div class="sys-sub">${sys.sub}</div>`);
+    sys.gates.forEach(g=>{
+      const chip = el('button','gate-chip', `<span class="g-code">${g.code}</span><span class="g-name">${g.name}</span>`);
+      chip.dataset.sys = sys.id; chip.dataset.code = g.code;
+      chip.addEventListener('click', ()=> showGate(sys, g, chip));
+      col.appendChild(chip);
+    });
+    cols.appendChild(col);
+  });
+
+  document.getElementById('highlightG2').addEventListener('click', ()=>{
+    document.querySelectorAll('.gate-chip').forEach(c=>c.classList.remove('flash','selected'));
+    let first=null;
+    document.querySelectorAll('.gate-chip').forEach(c=>{
+      if(c.dataset.code==='G2'){ c.classList.add('flash'); if(!first) first=c; }
+    });
+    if(first) first.scrollIntoView({block:'center', behavior:'smooth'});
+    const detail = document.getElementById('gateDetail');
+    detail.className = 'gate-detail show';
+    detail.style.setProperty('--sys-color','var(--ink)');
+    detail.innerHTML = `<h3>Same code, three different decisions</h3>
+      <div class="v" style="margin-top:6px;">
+        <strong>Budget G2</strong> — the Engagement Executive signs off the cost plan.<br>
+        <strong>Delivery G2</strong> — the funded go/no-go decision that kicks off vendor engagement.<br>
+        <strong>Demand G2</strong> — the Demand Board approves the demand and hands it into Delivery.
+      </div>
+      <p style="margin-top:10px; font-size:.85rem;">Three different owners, three different meetings, three different outcomes — all called "G2."</p>`;
+  });
+}
+function showGate(sys, g, chipEl){
+  document.querySelectorAll('.gate-chip').forEach(c=>c.classList.remove('selected','flash'));
+  chipEl.classList.add('selected');
+  const detail = document.getElementById('gateDetail');
+  detail.className = 'gate-detail show';
+  detail.style.setProperty('--sys-color', getComputedStyle(chipEl.closest('.gate-col')).getPropertyValue('--sys-color'));
+  detail.innerHTML = `
+    <div class="k">System</div><div class="v">${sys.title}</div>
+    <div class="k">Gate</div><div class="v">${g.code} — ${g.name}</div>
+    <div class="k">Owner</div><div class="v">${g.owner}</div>
+    <div class="k">What it means</div><div class="v">${g.meaning}</div>`;
+}
+
+/* --- Home flowcharts (BPMN + stepper tabs) --- */
+const TAB_ORDER = [
+  { key:"nep", kind:"bpmn" }, { key:"dblrp", kind:"bpmn" }, { key:"car", kind:"bpmn" }, { key:"demand", kind:"bpmn" },
+  { key:"rolling", kind:"stepper" }, { key:"monthly", kind:"stepper" },
+];
+let currentTab = 'nep';
+
+function buildCycles(){
+  const tabs = document.getElementById('cycleTabs');
+  TAB_ORDER.forEach(t=>{
+    const label = t.kind==='bpmn' ? BPMN_DIAGRAMS[t.key].label : CYCLES[t.key].label;
+    const btn = el('button','tab-btn'+(t.key===currentTab?' active':''), label);
+    btn.dataset.tab = t.key;
+    btn.addEventListener('click', ()=>{
+      currentTab = t.key;
+      document.querySelectorAll('#cycleTabs .tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCurrentTab();
+    });
+    tabs.appendChild(btn);
+  });
+  renderCurrentTab();
+  window.addEventListener('resize', ()=>{
+    if(TAB_ORDER.find(t=>t.key===currentTab).kind==='bpmn') fitBpmnCanvas();
+  });
+}
+
+function renderCurrentTab(){
+  const kind = TAB_ORDER.find(t=>t.key===currentTab).kind;
+  const legend = document.getElementById('bpmnLegend');
+  const head = document.getElementById('bpmnHead');
+  const frame = document.querySelector('.bpmn-frame');
+  const fitNote = document.getElementById('bpmnFitNote');
+  const flow = document.getElementById('cycleFlow');
+  if(kind==='bpmn'){
+    legend.style.display='flex'; head.style.display='block'; frame.style.display='flex'; fitNote.style.display='block'; flow.style.display='none';
+    renderBpmn(currentTab);
+  } else {
+    legend.style.display='none'; head.style.display='none'; frame.style.display='none'; fitNote.style.display='none'; flow.style.display='block';
+    renderCycle(currentTab);
+  }
+}
+
+function buildLegend(){
+  const legend = document.getElementById('bpmnLegend');
+  legend.innerHTML = `
+    <div class="legend-item"><span class="legend-shape evt"></span>Start event</div>
+    <div class="legend-item"><span class="legend-shape evt end"></span>End event</div>
+    <div class="legend-item"><span class="legend-shape task"></span>Task</div>
+    <div class="legend-item"><span class="legend-shape gov">★</span>Governance meeting</div>
+    <div class="legend-item"><span class="legend-shape mile">◆</span>Milestone</div>
+    <div class="legend-item"><span class="legend-shape gate"></span>Decision gateway</div>
+    <div class="legend-item" style="margin-left:auto; color:var(--ink-faint);">Click any shape for detail · scroll to see more →</div>
+  `;
+}
+
+/* BPMN geometry: compact enough that even the 8-lane diagrams fit a normal screen's height without vertical scrolling; horizontal scroll still handles the width */
+const BPMN_COL_W = 160, BPMN_LANE_H = 78, BPMN_TOP = 8, BPMN_EDGE_GAP = 60;
+let currentDiagramKey = null;
+
+function bpmnCenter(node){
+  return { x: node.col*BPMN_COL_W + BPMN_COL_W/2, y: BPMN_TOP + node.lane*BPMN_LANE_H + BPMN_LANE_H/2 };
+}
+
+function renderBpmn(key){
+  currentDiagramKey = key;
+  const diagram = BPMN_DIAGRAMS[key];
+  const canvas = document.getElementById('bpmnCanvas');
+  const laneLabels = document.getElementById('bpmnLaneLabels');
+  canvas.innerHTML = '';
+  laneLabels.innerHTML = '';
+
+  document.getElementById('bpmnHead').innerHTML = `<h3 style="margin-bottom:10px;">${diagram.title}</h3>` + ioCardHTML(diagram.io);
+  document.getElementById('bpmnFitNote').textContent = diagram.caption;
+
+  const maxCol = Math.max(...diagram.nodes.map(n=>n.col));
+  const totalW = (maxCol+1)*BPMN_COL_W + 20;
+  const naturalH = BPMN_TOP + diagram.lanes.length*BPMN_LANE_H + 16;
+  const laneLabelW = Math.min(160, Math.max(...diagram.lanes.map(l=>l.length))*5.6 + 24);
+
+  canvas.style.width = totalW+'px';
+  canvas.style.height = naturalH+'px';
+  laneLabels.style.width = laneLabelW+'px';
+
+  // Fixed lane-label column (does not scroll horizontally)
+  diagram.lanes.forEach((laneName,i)=>{
+    const tag = el('div','lane-tag', laneName);
+    tag.style.height = BPMN_LANE_H+'px';
+    laneLabels.appendChild(tag);
+  });
+  // spacer to align with the head/caption area above the lane rows
+  laneLabels.style.marginTop = BPMN_TOP+'px';
+  laneLabels.style.height = (naturalH-BPMN_TOP)+'px';
+
+  // Lane divider bands within the scrollable canvas
+  diagram.lanes.forEach((laneName,i)=>{
+    const band = el('div','bpmn-lane');
+    band.style.top = (BPMN_TOP + i*BPMN_LANE_H)+'px';
+    band.style.height = BPMN_LANE_H+'px';
+    band.style.width = totalW+'px';
+    canvas.appendChild(band);
+  });
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS,'svg');
+  svg.setAttribute('width', totalW); svg.setAttribute('height', naturalH);
+  svg.style.position='absolute'; svg.style.left='0'; svg.style.top='0'; svg.style.zIndex='1'; svg.style.pointerEvents='none';
+  svg.innerHTML = `<defs>
+    <marker id="arrow-${key}" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#3d3f45"/>
+    </marker>
+  </defs>`;
+
+  const nodeById = {};
+  diagram.nodes.forEach(n=> nodeById[n.id]=n);
+
+  diagram.edges.forEach(edge=>{
+    const a = nodeById[edge.from], b = nodeById[edge.to];
+    const ca = bpmnCenter(a), cb = bpmnCenter(b);
+    const path = document.createElementNS(svgNS,'path');
+    let d, loopDropY;
+    if(edge.loop){
+      // Dip only just below the lower of the two lanes involved, instead of the
+      // full canvas height — a full-height drop used to draw one long vertical
+      // line straight through every unrelated lane in the diagram.
+      const lowerLane = Math.max(a.lane, b.lane);
+      loopDropY = Math.min(BPMN_TOP + (lowerLane+1)*BPMN_LANE_H - 14, naturalH-14);
+      d = `M ${ca.x} ${ca.y+24} L ${ca.x} ${loopDropY} L ${cb.x} ${loopDropY} L ${cb.x} ${cb.y+24}`;
+    } else if(a.lane===b.lane){
+      d = `M ${ca.x+BPMN_EDGE_GAP} ${ca.y} L ${cb.x-BPMN_EDGE_GAP} ${cb.y}`;
+    } else {
+      const midX = (ca.x + cb.x)/2;
+      d = `M ${ca.x+BPMN_EDGE_GAP} ${ca.y} L ${midX} ${ca.y} L ${midX} ${cb.y} L ${cb.x-BPMN_EDGE_GAP} ${cb.y}`;
+    }
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', '#3d3f45');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('marker-end', `url(#arrow-${key})`);
+    svg.appendChild(path);
+
+    if(edge.label){
+      const midx = (ca.x+cb.x)/2;
+      // Cross-lane edges bend at the vertical segment — label it at that segment's
+      // vertical midpoint (not always at the source row), so branches fanning out
+      // from one node to several lanes don't stack their labels on top of each other.
+      let midy;
+      if(edge.loop) midy = loopDropY-18;
+      else if(a.lane===b.lane) midy = ca.y-13;
+      else midy = (ca.y+cb.y)/2 - 8;
+      const lbl = el('div','bpmn-edge-label', edge.label);
+      lbl.style.left = (midx-20)+'px'; lbl.style.top = midy+'px';
+      canvas.appendChild(lbl);
+    }
+  });
+  canvas.appendChild(svg);
+
+  const badgeHtml = { gov:'<span class="bpmn-node-badge">★ Governance</span>', mile:'<span class="bpmn-node-badge">◆ Milestone</span>' };
+
+  diagram.nodes.forEach(n=>{
+    const c = bpmnCenter(n);
+    let node;
+    if(n.type==='gate'){
+      node = el('div','bpmn-node n-gate');
+      node.style.width='44px'; node.style.height='44px';
+      node.style.left=(c.x-22)+'px'; node.style.top=(c.y-22)+'px';
+      node.innerHTML = `<div class="gate-inner"><span>${n.label}</span></div>`;
+    } else if(n.type==='start' || n.type==='end'){
+      node = el('div','bpmn-node n-event'+(n.type==='end'?' end':''), n.label);
+      node.style.width='48px'; node.style.height='48px';
+      node.style.left=(c.x-24)+'px'; node.style.top=(c.y-24)+'px';
+    } else {
+      const cls = n.type==='gov' ? 'n-gov' : (n.type==='mile' ? 'n-mile' : 'n-task');
+      node = el('div','bpmn-node '+cls);
+      node.innerHTML = (badgeHtml[n.type]||'') + `<div>${n.label}</div>`;
+      node.style.width='136px'; node.style.minHeight='46px';
+      node.style.left=(c.x-68)+'px'; node.style.top=c.y+'px';
+    }
+    node.addEventListener('click', ()=> openModal(n, diagram));
+    canvas.appendChild(node);
+  });
+
+  fitBpmnCanvas();
+}
+
+/* Diagrams render at natural, legible size — width overflow scrolls horizontally rather than shrinking text */
+function fitBpmnCanvas(){
+  const viewport = document.getElementById('bpmnViewport');
+  const canvas = document.getElementById('bpmnCanvas');
+  canvas.style.transform = 'none';
+  viewport.style.height = canvas.style.height;
+}
+
+/* Modal */
+function openModal(node, diagram){
+  const backdrop = document.getElementById('modalBackdrop');
+  const kickerMap = { start:"Start event", end:"End event", mile:"Milestone", gov:"Governance meeting", gate:"Decision gateway", task:"Task" };
+  document.getElementById('modalKicker').textContent = (diagram ? diagram.label+' · ' : '') + (kickerMap[node.type]||'Step');
+  document.getElementById('modalTitle').textContent = node.label;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-field"><div class="fk">Owner / actor</div><div class="fv">${node.detail.owner}</div></div>
+    <div class="modal-field"><div class="fk">What happens</div><div class="fv">${node.detail.desc}</div></div>
+  `;
+  backdrop.classList.add('show');
+}
+function closeModal(){ document.getElementById('modalBackdrop').classList.remove('show'); }
+
+/* Old-style stepper, reused for Rolling Forecast & Monthly Reporting */
+function renderCycle(key){
+  const flow = document.getElementById('cycleFlow');
+  flow.innerHTML = '';
+  const cyc = CYCLES[key];
+  const introP = el('p','', cyc.intro);
+  introP.style.marginBottom = '14px';
+  flow.appendChild(introP);
+  flow.insertAdjacentHTML('beforeend', ioCardHTML(cyc.io));
+  cyc.steps.forEach(s=>{
+    const step = el('div','flow-step'+(s.governance?' governance':'')+(s.milestone?' milestone':''));
+    step.innerHTML = `
+      <div class="rail"><div class="dot">${s.code}</div><div class="line"></div></div>
+      <div class="content">
+        <button class="step-head">
+          <div><div class="step-title">${s.title}</div><div class="step-meta">${s.meta}</div></div>
+          <div class="chev">›</div>
+        </button>
+        <div class="step-body"><p style="margin:0;">${s.body}</p></div>
+      </div>`;
+    step.querySelector('.step-head').addEventListener('click', ()=> step.classList.toggle('open'));
+    flow.appendChild(step);
+  });
+}
+
+/* --- Roles --- */
+function buildRoles(){
+  const filters = document.getElementById('roleFilters');
+  const pillars = ["All","Demand & Governance","Planning","Integrated Delivery","Boards"];
+  pillars.forEach(p=>{
+    const b = el('button','filter-btn'+(p==='All'?' active':''), p);
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('#roleFilters .filter-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      renderRoles(p);
+    });
+    filters.appendChild(b);
+  });
+  renderRoles('All');
+}
+function renderRoles(filter){
+  const grid = document.getElementById('roleGrid');
+  grid.innerHTML = '';
+  ROLES.filter(r=> filter==='All' || r.pillar===filter).forEach(r=>{
+    const card = el('div','role-card');
+    card.innerHTML = `
+      <div class="head">
+        <div><h3>${r.name}</h3><span class="pill pill-${r.tag}">${r.pillar}</span></div>
+        <div class="chev">+</div>
+      </div>
+      <div class="tagline">${r.tagline}</div>
+      <div class="full"><p>${r.full}</p></div>`;
+    card.addEventListener('click', ()=> card.classList.toggle('open'));
+    grid.appendChild(card);
+  });
+}
+
+/* --- Stakeholders --- */
+function buildStakeholders(){
+  renderStakeholders('');
+  document.getElementById('stakeholderSearch').addEventListener('input', e=> renderStakeholders(e.target.value.toLowerCase()));
+  const counts = {};
+  STAKEHOLDERS.forEach(r=>{ counts[r[2]] = (counts[r[2]]||0)+1; });
+  const multi = Object.entries(counts).filter(([k,v])=>v>1).map(([k,v])=>`${k} (${v} markets)`);
+  document.getElementById('spofNote').innerHTML = multi.length
+    ? `<strong>Coverage pattern:</strong> ${multi.join(', ')} — the same Network Market Partner is the named contact for more than one market above.`
+    : '';
+}
+function renderStakeholders(q){
+  const body = document.getElementById('stakeholderBody');
+  body.innerHTML = '';
+  const rows = STAKEHOLDERS.filter(r=> r.some(cell=>cell.toLowerCase().includes(q)));
+  if(!rows.length){ body.innerHTML = `<tr><td colspan="5" class="empty-state">No matches.</td></tr>`; return; }
+  rows.forEach(r=>{
+    const tr = el('tr','', `<td><strong>${r[0]}</strong></td><td class="soft">${r[1]}</td><td class="soft">${r[2]}</td><td class="soft">${r[3]}</td><td class="soft">${r[4]}</td>`);
+    body.appendChild(tr);
+  });
+}
+
+/* --- KPIs --- */
+function buildKpis(){
+  const filters = document.getElementById('kpiFilters');
+  const funcs = ["All", ...new Set(KPIS.map(k=>k[0]))];
+  funcs.forEach(f=>{
+    const b = el('button','filter-btn'+(f==='All'?' active':''), f);
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('#kpiFilters .filter-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      renderKpis(f);
+    });
+    filters.appendChild(b);
+  });
+  renderKpis('All');
+}
+function renderKpis(filter){
+  const body = document.getElementById('kpiBody');
+  body.innerHTML = '';
+  KPIS.filter(k=> filter==='All' || k[0]===filter).forEach(k=>{
+    const tr = el('tr','', `<td><strong>${k[0]}</strong></td><td class="soft">${k[1]}</td><td class="soft">${k[2]}</td>`);
+    body.appendChild(tr);
+  });
+}
+
+/* --- Glossary --- */
+function buildGlossary(){
+  renderGlossary('');
+  document.getElementById('glossarySearch').addEventListener('input', e=> renderGlossary(e.target.value.toLowerCase()));
+}
+function renderGlossary(q){
+  const list = document.getElementById('glossaryList');
+  list.innerHTML = '';
+  const rows = GLOSSARY.filter(g=> g[0].toLowerCase().includes(q) || g[1].toLowerCase().includes(q));
+  if(!rows.length){ list.innerHTML = `<div class="empty-state">No matches.</div>`; return; }
+  rows.forEach(g=>{
+    const row = el('div','glossary-row', `<div class="term">${g[0]}</div><div class="def">${g[1]}</div>`);
+    list.appendChild(row);
+  });
+}
+
+/* --- Modal wiring --- */
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalBackdrop').addEventListener('click', e=>{ if(e.target.id==='modalBackdrop') closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+/* ============================= INIT ============================= */
+buildNav();
+buildStats();
+buildLegend();
+buildCycles();
+buildGates();
+buildGovernance();
+buildRoles();
+buildStakeholders();
+buildKpis();
+buildGlossary();
+goTo('home');
+</script>
+</body>
+</html>

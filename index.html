@@ -852,6 +852,8 @@ h1,h2,h3,h4,h5,h6{ color:var(--ink); }
 .bpmn-node.c-pink{ background:#fdeef3; border-color:#dd8aa8; }
 .bpmn-node.c-green{ background:#eaf7ee; border-color:#6bb87e; }
 .bpmn-node.c-orange{ background:#fff2e3; border-color:#e0a05a; }
+.bpmn-node.c-navy{ background:#e8eaf3; border-color:#4d5b9e; }
+.bpmn-node.n-gate.c-navy span{ color:#3c4780; }
 .bpmn-node-output{ font-size:.58rem; font-weight:500; color:var(--ink-soft); line-height:1.15; }
 
 /* Wide "platform" node — spans several columns, holds a row of small icon+label chips */
@@ -1503,6 +1505,85 @@ const BPMN_DIAGRAMS = {
     ]
   },
 
+  dblrpIntelligent:{
+    label:"DB / LRP · Intelligent",
+    title:"Annual DB/LRP Plan — Intelligent Process Flow",
+    caption:"Same shape as the Original process — same lanes, gates, milestones (M0–M9) and sign-off authorities. What moves is where the work happens: validation and consolidation become system work in a new SNIP lane, cost planning and KPI targets merge into one submission, and a new planner-accepts checkpoint makes the AI's involvement visible rather than implicit.",
+    io:{
+      inputs:[
+        "Same DB/LRP inputs as today — NEP-approved projects, updated demand, financial envelope, prior rolling-forecast scenarios",
+        "One validated submission per market instead of a spreadsheet re-entered by hand",
+      ],
+      outputs:[
+        "Same DB/LRP outputs as today — delivered from one shared plan object instead of duplicate parallel lanes",
+        "One KPI submission at M9 (technical + financial merged) instead of two",
+        "A visible, auditable planner decision on every SNIP-recommended adjustment",
+      ],
+    },
+    lanes:["NW Director & NW Leadership Team","CNO","Engagem. Executives","Demand & Planning","Market CEO","NW Fin. BPR & local controller","NW Funct. Budget SPOC","Digital & IT Leadership Team","SNIP"],
+    nodes:[
+      { id:"s", lane:5, col:0, type:"start", label:"M0", detail:{ owner:"—", desc:"Mid October — the DB/LRP refinement cycle opens." } },
+      { id:"n1", lane:5, col:1, type:"task", label:"1. Share the calendar", detail:{ owner:"NW Fin. BPR & local controller", desc:"Share the calendar for DB/LRP with major milestones including CEO review and submission deadlines." } },
+      { id:"n2", lane:3, col:2, type:"task", label:"2. Share NEP outputs & guidance", detail:{ owner:"Demand & Planning", desc:"Share Network projects and high-level cost from NEP and other Strategic Boards / Rollout Board, plus Tech Guidance." } },
+      { id:"n3", lane:3, col:3, type:"task", label:"3. Collect updated demand & envelope", detail:{ owner:"Demand & Planning", desc:"Collect updated traffic demand, financial envelope and commercial priorities per project across all VF NW functions — the market's DB/LRP input." } },
+      { id:"snipValidate", lane:8, col:4, type:"ai", color:"blue", label:"Validate on upload", output:"Clean, structured submission — blocking", detail:{ owner:"SNIP", desc:"Validation runs the moment the market uploads its DB/LRP input. Structurally invalid or incomplete data is rejected immediately and never enters the plan — the correction loop is local and instant instead of a full round trip back through the cycle." } },
+      { id:"n4", lane:3, col:5, type:"ai", color:"green", label:"4. Prepare cost plan & KPI targets", output:"One submission — CAPEX/OPEX cost plan and KPI targets together", detail:{ owner:"Demand & Planning", desc:"Cost evaluation (previously entered in BPT) and KPI targets (previously entered separately in OHP) are captured as one submission instead of two parallel tracks. NW Funct. Budget SPOC now views the same shared object instead of re-entering it in a duplicate lane." } },
+      { id:"snipQuery", lane:8, col:6, type:"task", color:"blue", label:"5. (removed) — live consolidated view", detail:{ owner:"SNIP", desc:"The old manual 'E2E integrate CAPEX per market' consolidation step is gone entirely. The E2E view is now a live query against the shared plan object — always current, not a task anyone has to run or wait for." } },
+      { id:"n6", lane:3, col:7, type:"ai", color:"green", label:"6. Optimize for risk & KPI impact", output:"Optimised plan with risk and KPI impact scored", detail:{ owner:"Demand & Planning", desc:"Optimise the plan considering risk and KPI impact — merged from the two parallel Demand & Planning / NW Funct. Budget SPOC tracks into one." } },
+      { id:"snipVariance", lane:8, col:8, type:"ai", color:"blue", label:"Explain variance & recommend", output:"Variance explanation + a recommended adjustment", detail:{ owner:"SNIP", desc:"Where the optimised plan deviates from the prior baseline, SNIP explains the variance and proposes a recommended adjustment for a planner to review before it goes anywhere near the plan." } },
+      { id:"gwPlanner", lane:3, col:9, type:"gate", color:"navy", label:"Planner accepts?", detail:{ owner:"Demand & Planning", desc:"A new, explicit human control point that doesn't exist in the Original process: the planner accepts or rejects SNIP's recommendation before it enters the plan. No sends it back for rework; Yes proceeds to EE sign-off. This is an added control, not a removed one — it's the direct answer to \"is AI making decisions?\"" } },
+      { id:"snipCC", lane:8, col:10, type:"ai", color:"blue", label:"Compute cut-consequence", output:"Cut-consequence computed and visible", detail:{ owner:"SNIP", desc:"Before the EE sign-off meeting, the consequence of any proposed cut is computed and made visible, so the room isn't discovering trade-offs live in the meeting." } },
+      { id:"n7", lane:2, col:11, type:"gov", label:"7. Prioritize & agree market plan", detail:{ owner:"Engagem. Executives / NW Funct. Budget SPOC", desc:"Prioritize and agree the market plan against commercial priorities, Demand, VF Strategy and the financial envelope — unchanged as a step, except the cut-consequence is now computed and visible before the room meets, instead of being worked out live." } },
+      { id:"snipPack", lane:8, col:12, type:"ai", color:"blue", label:"Auto-generate sign-off pack", output:"CNO/LT sign-off pack, generated from the object", detail:{ owner:"SNIP", desc:"The presentation pack for the leadership sign-off is generated directly from the plan object instead of being assembled by hand from scratch each cycle." } },
+      { id:"n8", lane:0, col:13, type:"gov", label:"8. Review & agree the DB/LRP plan", detail:{ owner:"NW Director & NW Leadership Team", desc:"Leadership reviews and agrees the DB/LRP plan (M4) — unchanged as a step, except the pack is generated from the object rather than built by hand." } },
+      { id:"gw1", lane:0, col:14, type:"gate", label:"Agreed?", detail:{ owner:"NW Director & Leadership / CNO", desc:"“Plan agreed at LT + CNO?” If not agreed, it loops back to step 7 (Prioritize & agree market plan). If agreed, it proceeds to the target-change check. Unchanged from the Original process." } },
+      { id:"gw2", lane:0, col:15, type:"gate", label:"Target changed?", detail:{ owner:"NW Director & Leadership", desc:"If the underlying target changed, the whole cycle restarts from M0 (step 1). If not, the plan proceeds to market submission. Unchanged from the Original process." } },
+      { id:"n9", lane:1, col:16, type:"task", label:"9. Submit to Local Market", detail:{ owner:"CNO", desc:"The agreed plan is submitted to the local market." } },
+      { id:"n10", lane:1, col:17, type:"gov", label:"10. Discuss with Local ExCo", detail:{ owner:"CNO", desc:"Plan discussion with the Local Executive Committee — Financial sign-off. Unchanged." } },
+      { id:"n10b", lane:4, col:17, type:"gov", label:"Discuss with Local ExCo", detail:{ owner:"Market CEO", desc:"The market CEO participates in the same Local ExCo discussion, in parallel with CNO." } },
+      { id:"n10c", lane:5, col:17, type:"gov", label:"Discuss with Local ExCo", detail:{ owner:"NW Fin. BPR & local controller", desc:"NW Finance participates in the same Local ExCo discussion, in parallel — review of FY financial results and last DB adjustments." } },
+      { id:"n11", lane:1, col:18, type:"task", label:"11. Assess & embed changes", detail:{ owner:"CNO / Market CEO / NW Fin. BPR", desc:"Assess and embed changes into the plan based on CEO priorities." } },
+      { id:"n12", lane:0, col:19, type:"task", label:"12. Inform NW Leadership Team", detail:{ owner:"NW Director & NW Leadership Team", desc:"NW Leadership Team is informed of the finalised plan." } },
+      { id:"n13", lane:4, col:20, type:"mile", label:"13. Plan approved at Market Level", detail:{ owner:"Market CEO", desc:"Mid December (M5) — the plan is approved at market level, feeding directly into the Market Plan Handshake (M6) below." } },
+      { id:"n14", lane:0, col:21, type:"gov", label:"14. Market plan handshake", detail:{ owner:"NW Director & NW Leadership Team / Digital & IT Leadership Team", desc:"Market plan handshake per Function (NW and IT & Digital), M6, mid-January. Unchanged." } },
+      { id:"n14b", lane:4, col:21, type:"gov", label:"Market plan handshake", detail:{ owner:"Market CEO", desc:"The market CEO takes part in the same handshake (NW and IT & Digital), in parallel with the NW and Digital & IT leadership teams." } },
+      { id:"gw3", lane:0, col:22, type:"gate", label:"Agreed?", detail:{ owner:"NW Director & Leadership / Digital & IT Leadership", desc:"If the handshake is agreed, CAR preparation begins directly. If not, alternative scenarios are developed first. Unchanged." } },
+      { id:"n15a", lane:2, col:23, type:"task", label:"15a. Alternative scenarios", detail:{ owner:"Engagem. Executives", desc:"Alternative scenarios are developed when the initial handshake isn't agreed." } },
+      { id:"snipMaterial", lane:8, col:24, type:"ai", color:"blue", label:"Assemble CAR material", output:"CAR deck assembled from the plan object", detail:{ owner:"SNIP", desc:"CAR material — the deck, the numbers, the narrative — is assembled directly from the plan object instead of being built by hand from scratch each cycle." } },
+      { id:"n15b", lane:3, col:25, type:"gov", label:"15b. CAR material preparation", detail:{ owner:"Demand & Planning / NW Fin. BPR", desc:"CAR material preparation (M7, end January), now assembled from the shared object rather than built by hand. CAR decks must still be submitted by the markets by 11th January — a hard deadline. See the CAR diagram for the full detail." } },
+      { id:"n15c", lane:5, col:25, type:"gov", label:"15b. CAR preparation — finance input", detail:{ owner:"NW Fin. BPR & local controller", desc:"CAR preparation running in parallel in the finance lane, drawing on the same assembled material. Market Finance and Group Finance are both involved at this step." } },
+      { id:"n16", lane:0, col:26, type:"gov", label:"16. CAR Meeting", detail:{ owner:"NW Director & NW Leadership Team", desc:"The Capital Allocation Review meeting runs (M8, early–mid February). Unchanged." } },
+      { id:"n17", lane:0, col:27, type:"gov", label:"17. VF CEO Review & Signoff", detail:{ owner:"NW Director & NW Leadership Team", desc:"The VF CEO reviews and signs off the overall capex and opex position (M8). Unchanged." } },
+      { id:"n18", lane:3, col:28, type:"ai", color:"green", label:"18. Submit KPIs (technical & financial)", output:"One KPI submission, replacing two separate ones", detail:{ owner:"Demand & Planning / NW Fin. BPR & local controller", desc:"The single most visible change: technical KPIs and financial KPIs used to be two separate end-of-cycle submissions from two different lanes at M9. In SNIP they are one submission from one shared object." } },
+      { id:"e", lane:5, col:29, type:"mile", label:"Final Submission", detail:{ owner:"—", desc:"Beginning of March (M9) — the hard deadline that closes the annual Detailed Budget cycle. Unchanged." } },
+    ],
+    edges:[
+      {from:"s",to:"n1"},{from:"n1",to:"n2"},{from:"n2",to:"n3"},{from:"n3",to:"snipValidate"},
+      {from:"snipValidate",to:"n4"},
+      {from:"snipValidate",to:"n3",label:"invalid · fix & resubmit",loop:true},
+      {from:"n4",to:"n6"},
+      {from:"n6",to:"snipVariance"},{from:"snipVariance",to:"gwPlanner"},
+      {from:"gwPlanner",to:"n6",label:"No · rework",loop:true},
+      {from:"gwPlanner",to:"n7",label:"Yes"},
+      {from:"snipCC",to:"n7"},
+      {from:"n7",to:"snipPack"},{from:"n7",to:"n8"},{from:"snipPack",to:"n8"},
+      {from:"n8",to:"gw1"},
+      {from:"gw1",to:"n7",label:"No",loop:true},
+      {from:"gw1",to:"gw2",label:"Yes"},
+      {from:"gw2",to:"n1",label:"Target changed",loop:true},
+      {from:"gw2",to:"n9",label:"No"},
+      {from:"n9",to:"n10"},{from:"n9",to:"n10b"},{from:"n9",to:"n10c"},
+      {from:"n10",to:"n11"},{from:"n10b",to:"n11"},{from:"n10c",to:"n11"},
+      {from:"n11",to:"n12"},{from:"n12",to:"n13"},
+      {from:"n13",to:"n14"},{from:"n13",to:"n14b"},{from:"n14",to:"gw3"},{from:"n14b",to:"gw3"},
+      {from:"gw3",to:"n15a",label:"No"},{from:"n15a",to:"snipMaterial"},
+      {from:"gw3",to:"snipMaterial",label:"Yes"},
+      {from:"snipMaterial",to:"n15b"},{from:"snipMaterial",to:"n15c"},
+      {from:"n15b",to:"n16"},{from:"n15c",to:"n16"},{from:"n16",to:"n17"},{from:"n17",to:"n18"},
+      {from:"n18",to:"e"},
+    ]
+  },
+
   car:{
     label:"CAR",
     title:"Capital Allocation Review (CAR / NCAR)",
@@ -1893,28 +1974,36 @@ function buildCycles(){
 }
 
 
-let nepVersion = 'original';
-
+// Maps a process tab to its "Intelligent" (SNIP to-be) counterpart, when one exists.
+// Any bpmn tab not listed here simply has no version switch shown.
+const INTELLIGENT_MAP = { nep:'nepIntelligent', dblrp:'dblrpIntelligent' };
+const processVersion = {}; // per-tab 'original' | 'intelligent', defaults to 'original'
 
 function renderNepVersion(){
   const originalBtn=document.getElementById('nepOriginalBtn');
   const intelligentBtn=document.getElementById('nepIntelligentBtn');
+  const switchCopy=document.querySelector('#nepVersionSwitch .switch-copy');
   if(!originalBtn||!intelligentBtn) return;
-  const intelligent=nepVersion==='intelligent';
+  const intelligentKey = INTELLIGENT_MAP[currentTab];
+  const intelligent = intelligentKey && processVersion[currentTab]==='intelligent';
   originalBtn.classList.toggle('active',!intelligent); intelligentBtn.classList.toggle('active',intelligent);
   originalBtn.setAttribute('aria-selected',String(!intelligent)); intelligentBtn.setAttribute('aria-selected',String(intelligent));
+  if(switchCopy){
+    const procLabel = BPMN_DIAGRAMS[currentTab] ? BPMN_DIAGRAMS[currentTab].label : currentTab;
+    switchCopy.innerHTML = `<strong>${procLabel} process view</strong><br>Switch between the current/original process and the intelligent future-state (SNIP) version.`;
+  }
   // Both versions render through the same native diagram engine as every other process —
   // this is what actually fixes "doesn't fit" and "poor resolution": a real, crisp, responsive
   // DOM diagram rather than a fixed-resolution screenshot stretched to fill the page.
-  renderBpmn(intelligent ? 'nepIntelligent' : 'nep');
+  renderBpmn(intelligent ? intelligentKey : currentTab);
 }
 
 function initNepVersionSwitch(){
   const originalBtn=document.getElementById('nepOriginalBtn');
   const intelligentBtn=document.getElementById('nepIntelligentBtn');
   if(!originalBtn || !intelligentBtn) return;
-  originalBtn.addEventListener('click', ()=>{ nepVersion='original'; renderNepVersion(); });
-  intelligentBtn.addEventListener('click', ()=>{ nepVersion='intelligent'; renderNepVersion(); });
+  originalBtn.addEventListener('click', ()=>{ processVersion[currentTab]='original'; renderNepVersion(); });
+  intelligentBtn.addEventListener('click', ()=>{ processVersion[currentTab]='intelligent'; renderNepVersion(); });
   renderNepVersion();
 }
 
@@ -1927,7 +2016,7 @@ function renderCurrentTab(){
   const flow = document.getElementById('cycleFlow');
   const nepSwitch = document.getElementById('nepVersionSwitch');
 
-  if(currentTab==='nep'){
+  if(INTELLIGENT_MAP[currentTab]){
     legend.style.display='flex';
     head.style.display='block';
     frame.style.display='flex';
@@ -2075,7 +2164,7 @@ function renderBpmn(key){
     let node;
     const colorCls = n.color ? ' c-'+n.color : '';
     if(n.type==='gate'){
-      node = el('div','bpmn-node n-gate');
+      node = el('div','bpmn-node n-gate'+colorCls);
       node.style.width='44px'; node.style.height='44px';
       node.style.left=(c.x-22)+'px'; node.style.top=(c.y-22)+'px';
       node.innerHTML = `<div class="gate-inner"><span>${n.label}</span></div>`;

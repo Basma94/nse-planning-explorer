@@ -1626,6 +1626,56 @@ const BPMN_DIAGRAMS = {
     ]
   },
 
+  carIntelligent:{
+    label:"CAR · Intelligent",
+    title:"Capital Allocation Review (CAR / NCAR) — Intelligent Process Flow",
+    caption:"Same governance as the Original process — same attendees, signoff chain, 1-2-1s and milestone dates (M7–M8). What changes: CAR material is generated from the plan object instead of prepared twice in parallel, every request arrives with its prior-commitment track record and a common cost-per-outcome basis, scenario questions get answered live in the meeting instead of taken away, and the business case that follows funding starts from a generated draft.",
+    io:{
+      inputs:[
+        "Market-approved DB/LRP plan, after the Market Plan Handshake (M6)",
+        "The plan object direct from source — no separately prepared CAR decks",
+        "Monthly rolling forecast, for in-flight work",
+        "New, impact-assessed demand from the Front Door",
+      ],
+      outputs:[
+        "Approved annual CAPEX/OPEX plan & budget targets per market",
+        "VF CEO review and sign-off on the overall Capex/Opex position",
+        "Every request compared on a common cost-per-outcome basis, with its prior-commitment track record attached",
+        "SNIP-generated business case draft, feeding the funding-mobilisation trigger into NPRB",
+      ],
+    },
+    lanes:["VF Technology Director / CFO","NW Director & NW Leadership Team","Demand & Planning / NW Fin. BPR","Local CEO/CFO & local NW/D&IT Directors","SNIP"],
+    nodes:[
+      { id:"inputs", lane:2, col:0, type:"task", label:"New demand & rolling forecast", detail:{ owner:"Demand & Planning / Finance", desc:"Two standing inputs feed every CAR cycle: the Demand Front Door process (new demand that has been validated, impact assessed and prioritised) and the Monthly Rolling Forecast process (the latest view from NLT areas of forecast, to complete in-flight work). Unchanged." } },
+      { id:"s", lane:3, col:1, type:"start", label:"Handshake done", detail:{ owner:"—", desc:"Entry point: the market plan handshake between NW and IT & Digital functions has just completed (M6). Unchanged." } },
+      { id:"gwh", lane:3, col:2, type:"gate", label:"Agreed?", detail:{ owner:"Local CEO/CFO & local NW/D&IT Directors", desc:"If the handshake wasn't agreed, alternative scenarios are built before CAR material is prepared. Unchanged." } },
+      { id:"alt", lane:2, col:3, type:"task", label:"Alternative scenarios", detail:{ owner:"Demand & Planning", desc:"Alternative funding/scope scenarios are developed to resolve disagreement before CAR. Unchanged." } },
+      { id:"n_prep", lane:2, col:4, type:"ai", color:"green", label:"CAR material generated", output:"One CAR pack, generated from the plan object", detail:{ owner:"SNIP + Demand & Planning / NW Fin. BPR", desc:"The CAR pack is drawn directly from the plan object — one generation, not two parallel preparations by Demand & Planning and NW Finance for the same request. Impacts to the baseline, decisions needed and prioritisation calls are all pulled from source instead of assembled by hand." } },
+      { id:"snipTrack", lane:4, col:5, type:"ai", color:"blue", label:"Prior-commitment performance", output:"What this market got at the last CAR, and what it delivered", detail:{ owner:"SNIP", desc:"Every request now carries its track record into the room: what this market received at the last CAR, what it committed to move, and what actually moved. Nothing in the Original process makes this visible — it's the single most useful thing this adds." } },
+      { id:"snipCompare", lane:4, col:6, type:"ai", color:"blue", label:"Cost-per-outcome comparison", output:"Same basis across all 17 markets", detail:{ owner:"SNIP", desc:"Every request is scored on the same cost-per-outcome basis across all 17 markets, so the meeting can rank requests against each other instead of assessing each one only on its own terms." } },
+      { id:"n_agenda", lane:2, col:7, type:"task", label:"CAR Agenda & Pre-Read", detail:{ owner:"Demand & Planning / NW Fin. BPR", desc:"Standard CAR pack and agenda sent to all attendees ahead of the meeting — now assembled from the same generated material. Unchanged as a step." } },
+      { id:"n_meeting", lane:1, col:8, type:"gov", color:"orange", label:"CAR Meeting", detail:{ owner:"NW Director & NW Leadership Team", desc:"Same attendees as today: VF Technology Director/CFO, VF Networks/D&IT directors, VF Technology Finance, Local CEO/CFO, and local NW/D&IT directors. What's new: scenario response lives in the meeting itself — \"if we fund 70% of this, what falls out and which KPI target becomes unreachable\" is answered live instead of taken away as a follow-up." } },
+      { id:"gw_dec", lane:1, col:9, type:"gate", label:"Decisions", detail:{ owner:"NW Director & NW Leadership Team", desc:"The board reviews and considers all proposed changes to plan and their impact, producing approvals, rejections and actions. Unchanged." } },
+      { id:"n_signoff", lane:0, col:10, type:"gov", label:"VF CEO Review & Signoff", detail:{ owner:"VF Technology Director / CFO", desc:"Network CEO meetings with the VF Technology director, CFO and Finance controllers align the overall Capex/Opex view; separate 1:1 meetings between the Network CEO/CFO and Local CEO/CFO align local financials. Stays exactly as it is — the most senior forum in the cycle is not where you make process changes." } },
+      { id:"snipBC", lane:4, col:11, type:"ai", color:"blue", label:"Generate business case draft", output:"Draft business case, evidenced from the plan object", detail:{ owner:"SNIP", desc:"Much of the business case's evidence base already exists in the plan object. SNIP generates a draft for the requestor to refine, rather than everyone starting from a blank page." } },
+      { id:"n_bc", lane:2, col:12, type:"gov", color:"orange", label:"Business Case", detail:{ owner:"Demand & Planning / Requestor", desc:"The formal business case required by the NPRB Business Case Process before SAP issues a WBS and funding is authorised. Today it's built by hand between CAR funding and WBS creation; now it starts from a SNIP-generated draft." } },
+      { id:"e", lane:1, col:13, type:"end", label:"Funding Mobilisation", detail:{ owner:"—", desc:"The signed-off plan and business case feed directly into Final Submission in the DB/LRP diagram. CAR is the handover point in SNIP's identity chain: before it, an initiative is a BPT tracking number; after it, plus the business case, SAP issues a WBS and tracking begins — which is what makes \"did the money deliver?\" answerable at the next CAR." } },
+    ],
+    edges:[
+      {from:"inputs",to:"n_prep"},
+      {from:"s",to:"gwh"},
+      {from:"gwh",to:"alt",label:"No"},{from:"alt",to:"n_prep"},
+      {from:"gwh",to:"n_prep",label:"Yes"},
+      {from:"n_prep",to:"n_agenda"},
+      {from:"snipTrack",to:"n_meeting"},{from:"snipCompare",to:"n_meeting"},
+      {from:"n_agenda",to:"n_meeting"},
+      {from:"n_meeting",to:"gw_dec"},
+      {from:"gw_dec",to:"n_signoff",label:"Approved"},
+      {from:"n_signoff",to:"n_bc"},{from:"snipBC",to:"n_bc"},
+      {from:"n_bc",to:"e"},
+    ]
+  },
+
   demand:{
     label:"Demand",
     title:"Networks Demand Front Door — Work Flow Process",
@@ -1976,7 +2026,7 @@ function buildCycles(){
 
 // Maps a process tab to its "Intelligent" (SNIP to-be) counterpart, when one exists.
 // Any bpmn tab not listed here simply has no version switch shown.
-const INTELLIGENT_MAP = { nep:'nepIntelligent', dblrp:'dblrpIntelligent' };
+const INTELLIGENT_MAP = { nep:'nepIntelligent', dblrp:'dblrpIntelligent', car:'carIntelligent' };
 const processVersion = {}; // per-tab 'original' | 'intelligent', defaults to 'original'
 
 function renderNepVersion(){

@@ -284,6 +284,24 @@ a{ color:var(--blue-ink); }
 .gate-detail .k:first-child{ margin-top:0; }
 .gate-detail .v{ font-size:.89rem; color:var(--ink); margin-top:2px; }
 
+/* "What's SNIP" reference page */
+.callout{
+  background:var(--navy-soft); border-left:3px solid var(--navy); border-radius:var(--radius);
+  padding:14px 18px; margin:18px 0; font-size:.89rem; color:var(--ink); font-weight:600; line-height:1.55;
+}
+.doc-list{ margin:0 0 14px 0; padding-left:19px; }
+.doc-list li{ font-size:.87rem; color:var(--ink-soft); line-height:1.65; margin-bottom:5px; }
+.doc-list li:last-child{ margin-bottom:0; }
+.snip-sub{ margin:30px 0 0 0; }
+.snip-sub:first-child{ margin-top:0; }
+.snip-sub h3{ font-size:1.03rem; margin:0 0 8px 0; }
+.snip-sub-label{ font-size:.72rem; font-weight:700; color:var(--red-ink); text-transform:uppercase; letter-spacing:.04em; margin:0 0 4px 0; }
+.snip-formula{
+  background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:14px 18px;
+  font-family:var(--font-mono, 'IBM Plex Mono', monospace); font-size:.8rem; line-height:1.7; color:var(--ink);
+  white-space:pre; overflow-x:auto; margin:14px 0;
+}
+
 /* ---------- Home hero / flowcharts ---------- */
 .hero-head{ padding:40px 48px 6px 48px; scroll-margin-top:70px; }
 .hero-stats-wrap{ padding:0 48px; }
@@ -1103,6 +1121,537 @@ tbody tr:hover{background:#fafafa!important;}
     </section>
     </div>
 
+    <!-- WHAT'S SNIP -->
+    <section class="page-section full tab-page" id="sec-snip">
+      <div class="eyebrow">Business case · Draft v0.3 · Confidential</div>
+      <h1 style="font-size:1.9rem;">What&rsquo;s SNIP</h1>
+      <p class="lede">Strategic Network Intelligent Planning — why it exists, what changes, what it costs, and what&rsquo;s being asked for.</p>
+
+      <div class="summary-card">
+        <span class="icon-badge icon-badge-md icon-navy" style="margin-bottom:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10c0-1-.2-2-.4-3"></path><path d="m14.5 3.5-5 5"></path><path d="m9.5 3.5 5 5"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
+        <div>
+          <h3>One governed planning object, replacing three disconnected platforms</h3>
+          <p>SNIP fuses Vodafone&rsquo;s internal planning lens — objectives, KPIs, targets, investment, delivery and outcomes — with the external lens of competitor position and market evolution, in one persistent record instead of scattered snapshots.</p>
+          <div class="chip-trail">
+            <span class="chip">NEP</span>
+            <span class="arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+            <span class="chip">LRP / DB commitment</span>
+            <span class="arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+            <span class="chip">CAR decision</span>
+            <span class="arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+            <span class="chip">SAP WBS</span>
+            <span class="arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+            <span class="chip accent">Realised outcome</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-row" id="snipTabs"></div>
+
+      <!-- 1. OVERVIEW -->
+      <div class="gov-panel active" data-panel="overview">
+        <div class="snip-sub">
+          <div class="snip-sub-label">Vision</div>
+          <h3>Establish one intelligent, governed Strategic Network Planning Object</h3>
+          <p>SNIP will realise this vision by creating a persistent, intelligent and governed Strategic Network Planning Object. It combines internal performance and planning evidence with governed external intelligence to provide a complete strategic perspective, retain the rationale and history behind material decisions, connect technical ambition with financial commitment and delivery, and generate explainable insight for earlier intervention and continuous improvement.</p>
+        </div>
+
+        <div class="grid grid-3" style="margin-top:18px;">
+          <div class="feature-card">
+            <h3>Why this matters</h3>
+            <p style="margin:0;">Vodafone&rsquo;s network planning cycle influences &euro;[X] billion of investment and involves ~300 stakeholders, yet there is no single governed record linking ambition and rationale to expected cost, approval, funding, delivery and realised outcomes. Evidence is distributed across stages, platforms and manually assembled records — this limits traceability and makes it hard to explain whether investment delivered the intended outcome.</p>
+          </div>
+          <div class="feature-card">
+            <h3>What will change</h3>
+            <p style="margin:0;">One persistent planning identity across the lifecycle, governed KPI definitions, source validation, version history, traceability from strategy to outcome, self-service analysis, and progressively stronger forecasting and decision support — delivered in controlled phases. Platform replacement is a consequence of the target operating model, not the starting point.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Decision requested</h3>
+            <p style="margin:0;">Approve &euro;[amount] for Phase 1 in [period], and confirm the executive sponsor, economic buyer, business owner, future service owner, pilot scope, benefit baseline, operating model, success thresholds and next investment gate on [date].</p>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <h3>How the vision will be delivered</h3>
+          <div class="grid grid-3">
+            <div class="card"><strong>1. Governed Foundation</strong><p style="margin:6px 0 0;">Establish control, common identity, trusted history and immediate value through a focused 50-KPI pilot.</p></div>
+            <div class="card"><strong>2. Financial Harmony and Intelligence</strong><p style="margin:6px 0 0;">Connect technical and financial planning, then introduce governed forecasting, variance explanation and benchmarking.</p></div>
+            <div class="card"><strong>3. Execution Closure</strong><p style="margin:6px 0 0;">Connect approved plans to funding, delivery and realised outcomes, completing the end-to-end planning cycle.</p></div>
+          </div>
+        </div>
+
+        <div class="callout">Recommendation: approve Phase 1 to establish one governed planning foundation, validate measurable value and create the evidence required for gated expansion.</div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">1. What SNIP Is</div>
+          <h3>Strategic Network Intelligent Planning</h3>
+          <p>Its purpose is to establish one intelligent, governed Strategic Network Planning Object that fuses the internal lens — objectives, KPIs, targets, investment commitments, delivery and outcomes — with the external lens of competitor activity, market dynamics and emerging technologies. Today, each stage of the planning cycle contains part of the truth; SNIP creates continuity across those stages by maintaining a persistent planning identity and the evidence associated with each material decision.</p>
+
+          <div class="snip-sub-label" style="margin-top:18px;">1.1 The SNIP plan object</div>
+          <div class="chip-trail" style="margin:8px 0 14px;">
+            <span class="chip">NEP</span><span class="arrow">&rarr;</span>
+            <span class="chip">Programme</span><span class="arrow">&rarr;</span>
+            <span class="chip">Technical KPI &amp; target</span><span class="arrow">&rarr;</span>
+            <span class="chip">SNIP planning record</span><span class="arrow">&rarr;</span>
+            <span class="chip">LRP commitment</span><span class="arrow">&rarr;</span>
+            <span class="chip">DB commitment</span><span class="arrow">&rarr;</span>
+            <span class="chip">CAR decision</span><span class="arrow">&rarr;</span>
+            <span class="chip">SAP WBS</span><span class="arrow">&rarr;</span>
+            <span class="chip">SNIP delivery mgmt</span><span class="arrow">&rarr;</span>
+            <span class="chip">Actual performance</span><span class="arrow">&rarr;</span>
+            <span class="chip accent">Realised outcome</span>
+          </div>
+          <p style="margin-bottom:6px;">The plan object should retain:</p>
+          <ul class="doc-list">
+            <li>Market, planning period and plan version</li>
+            <li>Strategic objective, network domain, vertical and programme</li>
+            <li>KPI definition, baseline and target</li>
+            <li>Assumptions and dependencies</li>
+            <li>Planning identifier, financial commitment and funding status</li>
+            <li>WBS, delivery status and actual performance</li>
+            <li>Variance, supporting evidence and decision history</li>
+            <li>Accountable owner and approver</li>
+          </ul>
+
+          <div class="grid grid-2" style="margin-top:8px;">
+            <div class="card">
+              <div class="snip-sub-label">1.2 What SNIP is not</div>
+              <ul class="doc-list" style="margin-top:8px;">
+                <li>A standalone replacement for only one platform</li>
+                <li>An AI chatbot placed over existing data</li>
+                <li>A simple migration of OHP, BPT or PPM without redesigning the end-to-end planning process</li>
+                <li>A programme to replace every enterprise system that supplies data to network planning</li>
+                <li>An autonomous decision-maker</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="snip-sub-label">1.3 The intended outcome</div>
+              <ul class="doc-list" style="margin-top:8px;">
+                <li>Preserve the reasoning behind planning decisions</li>
+                <li>Connect technical ambition with financial commitment</li>
+                <li>Validate information before it enters the cycle</li>
+                <li>Understand how the plan changes over time</li>
+                <li>Identify emerging delivery or performance risk</li>
+                <li>Compare outcomes consistently</li>
+                <li>Evaluate whether investment delivered the intended result</li>
+                <li>Improve future planning using evidence from previous cycles</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">2. Why Now</div>
+          <h3>2.1 Network planning decisions require broader evidence</h3>
+          <p>Network planning increasingly needs to balance network performance, customer demand, capacity requirements, investment constraints, market priorities, delivery capability, technology evolution, competitor position and changing commercial performance — to know whether performance diverged because of financial, operational or external causes, and which intervention is most appropriate.</p>
+          <h3>2.2 Enabling data and analytical capabilities are becoming available</h3>
+          <p>Vodafone has an opportunity to combine strategic planning information, governed KPI history, financial commitments, funding decisions, programme delivery information, network actuals, market benchmarking, competitor context, forecasting and explainable decision support. These capabilities cannot generate reliable value when built on disconnected identifiers, inconsistent definitions or uncontrolled planning history — the immediate priority is to establish the common foundation once and let subsequent capabilities reuse it.</p>
+          <h3>2.3 The current planning foundation must change</h3>
+          <p>Vodafone can either address individual technical limitations while maintaining the existing planning model, or use the required change to establish one governed capability across the planning cycle. The first approach restores individual components. The second improves how Vodafone plans, funds, monitors and learns from network investment.</p>
+          <h3>2.4 Delay weakens future intelligence</h3>
+          <ul class="doc-list">
+            <li>Assumptions are not consistently retained</li>
+            <li>Corrections occur outside the authoritative source</li>
+            <li>Target definitions may drift</li>
+            <li>Technical and financial records remain difficult to connect</li>
+            <li>The reason behind changes may not be preserved</li>
+            <li>Decisions continue to depend on manually reconstructed evidence</li>
+          </ul>
+          <div class="callout">The longer Vodafone waits to create governed planning history, the longer it postpones the intelligence that depends on that history.</div>
+        </div>
+      </div>
+
+      <!-- 2. THE CHANGE -->
+      <div class="gov-panel" data-panel="change">
+        <div class="snip-sub">
+          <div class="snip-sub-label">3. What Will Change</div>
+          <div class="table-wrap" style="margin-top:10px;">
+            <table>
+              <thead><tr><th style="width:26%">Shift</th><th style="width:37%">Today</th><th>With SNIP</th></tr></thead>
+              <tbody>
+                <tr><td><strong>3.1 Separate stages &rarr; one planning record</strong></td><td class="soft">NEP, LRP, DB, CAR and monthly management use different representations and identifiers.</td><td class="soft">A persistent plan object connects the stages while preserving identity, context, ownership and decision history across contributing platforms.</td></tr>
+                <tr><td><strong>3.2 Snapshots &rarr; governed history</strong></td><td class="soft">Plans are submitted, corrected, approved and revised, but the complete history is not held consistently in one governed structure.</td><td class="soft">Every material change retains the original and revised value, version, reason, evidence, accountable owner, approving authority and effective date.</td></tr>
+                <tr><td><strong>3.3 Central correction &rarr; source validation</strong></td><td class="soft">Data is extracted, consolidated and corrected after it has left the market.</td><td class="soft">Validation occurs before acceptance, with clear failed rules, required corrections, exception routes and approval authority.</td></tr>
+                <tr><td><strong>3.4 Reporting variance &rarr; explaining variance</strong></td><td class="soft">Monthly reporting identifies differences between target and actual performance.</td><td class="soft">Variance is decomposed into evidence-backed drivers and reviewed by an accountable planner.</td></tr>
+                <tr><td><strong>3.5 Retrospective &rarr; earlier intervention</strong></td><td class="soft">Risk may become clear only after several reporting periods.</td><td class="soft">Vodafone progressively tests target credibility, forecasts landing, identifies emerging risk, compares scenarios and records action decisions.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">4. The Future Planning Experience</div>
+          <div class="grid grid-2">
+            <div class="feature-card">
+              <h3>4.1 Market planners</h3>
+              <ul class="doc-list" style="margin-top:6px;"><li>Enter or upload planning information once</li><li>Receive immediate validation and correct errors at source</li><li>Reuse governed KPI definitions</li><li>See submission and exception status</li><li>Access relevant benchmarks and evidence</li></ul>
+            </div>
+            <div class="feature-card">
+              <h3>4.2 Group Network Strategy &amp; Engineering</h3>
+              <ul class="doc-list" style="margin-top:6px;"><li>Access conformed market submissions</li><li>View governed planning versions</li><li>Reduce repeated consolidation</li><li>Generate reusable reporting views</li><li>Identify emerging risk and preserve decision history</li></ul>
+            </div>
+            <div class="feature-card">
+              <h3>4.3 Finance</h3>
+              <ul class="doc-list" style="margin-top:6px;"><li>Connect technical ambition with financial commitment</li><li>Trace changes through LRP, DB and CAR</li><li>Link planning identifiers with funded WBS records</li><li>Support cost-per-outcome analysis</li></ul>
+            </div>
+            <div class="feature-card">
+              <h3>4.4 Senior decision-makers</h3>
+              <ul class="doc-list" style="margin-top:6px;"><li>View strategy, funding, delivery and performance together</li><li>Assess credibility before commitment</li><li>Compare scenarios and evidence</li></ul>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <h3>4.5 Assurance and audit</h3>
+            <ul class="doc-list" style="margin-top:6px; column-count:2; column-gap:24px;"><li>Identify accountable owners</li><li>Trace material changes and approvals</li><li>Inspect validation exceptions</li><li>Reproduce decision evidence</li><li>Distinguish system insight from human judgement</li></ul>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">5. The Planning Cycle Today</div>
+          <p>Well established and governed through distinct decision points. The limitation is that each decision point operates on a different part of the planning record.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Decision point</th><th>Governing question</th><th>Current limitation</th></tr></thead>
+              <tbody>
+                <tr><td><strong>NEP</strong></td><td class="soft">What three-year ambition should Vodafone set?</td><td class="soft">Limited governed connection to external market and competitor context.</td></tr>
+                <tr><td><strong>LRP and DB</strong></td><td class="soft">What financial commitment is required?</td><td class="soft">Financial and technical planning records are separate.</td></tr>
+                <tr><td><strong>CAR</strong></td><td class="soft">Which investments should be funded?</td><td class="soft">Planning identifier and funded WBS are not retained in one persistent record.</td></tr>
+                <tr><td><strong>Monthly management</strong></td><td class="soft">Is delivery meeting the commitment?</td><td class="soft">Variance is reported but its origin is not systematically explained.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">No single planning capability today holds what was planned, targeted, committed, funded, delivered and realised together.</div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">6. What Prevents the Change Today</div>
+          <div class="grid grid-3">
+            <div class="card"><h3>6.1 No single plan object</h3><p style="margin:0;">Technical planning, financial commitment and execution status are distributed across OHP, BPT and PPM, while actual spend remains in SAP. SNIP will replace OHP, BPT and PPM with one persistent planning record that maintains identity, mapping and decision history through to the SAP WBS.</p></div>
+            <div class="card"><h3>6.2 Limited process-floor integration</h3><p style="margin:0;">Key planning information leaves existing platforms through spreadsheet extracts. This prevents reliable workflow automation and constrains controlled use of forecasting or analytical models.</p></div>
+            <div class="card"><h3>6.3 No governed external dimension</h3><p style="margin:0;">Competitor and market context are not systematically connected to the planning record.</p></div>
+            <div class="card"><h3>6.4 Insufficiently governed history</h3><p style="margin:0;">KPI naming, calculation logic, vertical structures and classifications have changed over time, weakening comparability across markets, versions and periods.</p></div>
+            <div class="card"><h3>6.5 Fragile operational components</h3><p style="margin:0;">OHP, BPT and PPM each hold important parts of the current process, but their fragmented architecture prevents a single governed record. SNIP will replace all three and consolidate their relevant capabilities within one supported product.</p></div>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">7. What Intelligent Planning Means</div>
+          <div class="grid grid-2">
+            <div class="feature-card"><h3>7.1 Explain — <em>why did the gap open?</em></h3><p style="margin:0;">Distinguish delivery shortfall, timing, phasing, assumption error, funding change, target or baseline revision, data quality, structural trend and external cause.</p></div>
+            <div class="feature-card"><h3>7.2 Anticipate — <em>will the target still be met?</em></h3><p style="margin:0;">Estimate expected landing, confidence range, emerging risk and the assumptions influencing the forecast. Production use follows validation against an agreed baseline.</p></div>
+            <div class="feature-card"><h3>7.3 Compare — <em>is Vodafone falling behind, or is the market changing?</em></h3><p style="margin:0;">Support cross-market benchmarking using conformed KPI definitions and external context where governed data is available.</p></div>
+            <div class="feature-card"><h3>7.4 Recommend — <em>what action should be taken?</em></h3><p style="margin:0;">Propose evidence-based actions through the correct planning route. A named planner must accept, reject, amend or defer the recommendation, with rationale retained.</p></div>
+          </div>
+          <div class="callout">SNIP cannot become intelligent until the planning cycle becomes governable. Intelligence is the final layer, not the first.</div>
+        </div>
+      </div>
+
+      <!-- 3. VALUE & OPTIONS -->
+      <div class="gov-panel" data-panel="value">
+        <div class="snip-sub">
+          <div class="snip-sub-label">8. Opportunity and Value Tree</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width:14%">Layer</th><th style="width:26%">Purpose</th><th>Illustrative outcomes</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Control</strong></td><td class="soft">Make the cycle governable</td><td class="soft">Persistent plan object; conformed dimensions; KPI catalogue; source validation; controlled exceptions; decision history.</td></tr>
+                <tr><td><strong>Efficiency</strong></td><td class="soft">Stop assembling, start querying</td><td class="soft">Source correction; reusable views; generated packs; self-service; eligible NGDI automation.</td></tr>
+                <tr><td><strong>Traceability</strong></td><td class="soft">Connect plan, money and delivery</td><td class="soft">Technical-to-financial linkage; SNIP planning record to WBS mapping; SNIP delivery status; cost per outcome; NEP-to-built traceability.</td></tr>
+                <tr><td><strong>Intelligence</strong></td><td class="soft">Improve the decision</td><td class="soft">Variance explanation; target credibility; forecasting; market benchmarking; competitor context; scenarios; recommendations.</td></tr>
+                <tr><td><strong>Optionality</strong></td><td class="soft">Reuse the foundation</td><td class="soft">Financial twin module; future NSE use cases; shared controls; lower marginal cost.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="chip-trail" style="margin-top:12px;">
+            <span class="chip">Control</span><span class="arrow">&rarr;</span>
+            <span class="chip">Efficiency</span><span class="arrow">&rarr;</span>
+            <span class="chip">Traceability</span><span class="arrow">&rarr;</span>
+            <span class="chip">Intelligence</span><span class="arrow">&rarr;</span>
+            <span class="chip accent">Optionality</span>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">9. Value Case</div>
+          <div class="snip-formula">SNIP risk-adjusted value =
+    verified operating effort removed
+  + verified operating cost avoided
+  + quantified continuity risk reduction
+  + valued capacity released
+  + avoided duplicate investment
+  + risk-adjusted decision-quality upside
+  - implementation cost
+  - transition cost
+  - recurring run cost</div>
+
+          <div class="snip-sub-label" style="margin-top:16px;">9.2 Value categories</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Category</th><th>Basis</th><th>Current value</th><th>Treatment</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Control &amp; continuity</strong></td><td class="soft">Removal of fragile components and key-person dependency</td><td class="soft">Non-financial until quantified</td><td class="soft">Core outcome</td></tr>
+                <tr><td><strong>Hard saving</strong></td><td class="soft">Verified hours removed &times; loaded rate</td><td class="soft">&euro;[ ] per year</td><td class="soft">Core case after validation</td></tr>
+                <tr><td><strong>Capacity released</strong></td><td class="soft">Time redirected from administration to analysis</td><td class="soft">&euro;[ ] equivalent</td><td class="soft">Enabling, not automatically cashable</td></tr>
+                <tr><td><strong>Avoided duplication</strong></td><td class="soft">Migration plus later transformation vs. integrated approach</td><td class="soft">&euro;[ ]</td><td class="soft">Core case if evidenced</td></tr>
+                <tr><td><strong>Avoided disruption</strong></td><td class="soft">Impact of failure &times; probability</td><td class="soft">&euro;[ ]</td><td class="soft">Risk-adjusted</td></tr>
+                <tr><td><strong>Decision quality</strong></td><td class="soft">Capital influenced &times; evidenced improvement &times; attribution &times; confidence</td><td class="soft">&euro;[ ]</td><td class="soft">Strategic upside</td></tr>
+                <tr><td><strong>Future reuse</strong></td><td class="soft">Lower marginal cost for later use cases</td><td class="soft">&euro;[ ]</td><td class="soft">Optionality</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid grid-2" style="margin-top:14px;">
+            <div class="card">
+              <h3>9.3 &ndash; 9.4 Efficiency hypothesis &amp; classification discipline</h3>
+              <p style="margin-bottom:8px;">The efficiency figure is a working hypothesis pending process-owner and Finance validation. The baseline must identify activity, role, location, frequency, volume, average duration, automation potential, residual activity and signed approval.</p>
+              <ul class="doc-list" style="margin-bottom:0;">
+                <li><strong>Cashable:</strong> a budget, external service, overtime cost or role cost is genuinely removed.</li>
+                <li><strong>Capacity released:</strong> colleagues redirect time to modelling, analysis, intervention or governance.</li>
+                <li><strong>Avoided cost:</strong> a future expense or duplicated transformation is prevented.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>9.5 Strategic value</h3>
+              <p style="margin:0;">Decision-quality value should initially be presented as upside. A defensible calculation requires capital genuinely in scope, a specific decision SNIP can influence, an observable improvement measure, a counterfactual baseline, attribution, confidence and protection against double counting.</p>
+            </div>
+          </div>
+          <div class="callout">The initial case should stand on control, continuity, validated efficiency and avoided duplication. Decision-quality value is additional upside.</div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">10. Options Considered</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Option</th><th>Principal advantage</th><th>Principal limitation</th><th>Assessment</th></tr></thead>
+              <tbody>
+                <tr><td><strong>1. Continue current approach</strong></td><td class="soft">Minimal immediate change.</td><td class="soft">Fragmentation, manual work, weak history and operational exposure continue.</td><td><span class="pill pill-grey">Not recommended</span></td></tr>
+                <tr><td><strong>2. Technical migration only</strong></td><td class="soft">Restores technical support with limited functional change.</td><td class="soft">Preserves manual transfers, fragmented records and the need for later transformation.</td><td><span class="pill pill-grey">Fallback only</span></td></tr>
+                <tr><td><strong>3. Replace KPI capability only</strong></td><td class="soft">Improves intake, validation, catalogue and selected reporting.</td><td class="soft">Technical and financial planning remain separate; must be retrofitted later.</td><td><span class="pill pill-blue">Partial solution</span></td></tr>
+                <tr><td><strong>4. SNIP Foundation with gated expansion</strong></td><td class="soft">Creates governed identity, history, intake, validation and usable Phase 1 value.</td><td class="soft">Requires governance change, ownership and later cross-functional cooperation.</td><td><span class="pill pill-teal">Recommended</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. DELIVERY -->
+      <div class="gov-panel" data-panel="delivery">
+        <div class="snip-sub">
+          <div class="snip-sub-label">11. Platform Disposition</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Platform / channel</th><th>Disposition</th><th>Rationale</th></tr></thead>
+              <tbody>
+                <tr><td><strong>OHP</strong></td><td><span class="pill pill-red">Replace with SNIP</span></td><td class="soft">SNIP will provide the supported technical planning, KPI governance, validation, history and reporting capability currently associated with OHP.</td></tr>
+                <tr><td><strong>BPT</strong></td><td><span class="pill pill-red">Replace with SNIP</span></td><td class="soft">SNIP will absorb financial planning, governance stages, prioritisation data and the pre-funding planning identifier.</td></tr>
+                <tr><td><strong>PPM</strong></td><td><span class="pill pill-red">Replace with SNIP</span></td><td class="soft">SNIP will incorporate programme delivery management and status tracking to connect approved plans directly to execution.</td></tr>
+                <tr><td><strong>SAP</strong></td><td><span class="pill pill-grey">Integrate, read-mostly</span></td><td class="soft">SAP remains authoritative for WBS and financial actuals; SNIP consumes the WBS after CAR.</td></tr>
+                <tr><td><strong>NGDI</strong></td><td><span class="pill pill-grey">Integrate after foundation</span></td><td class="soft">NGDI may automate eligible actuals; targets and exceptions remain governed through SNIP.</td></tr>
+                <tr><td><strong>Excel</strong></td><td><span class="pill pill-grey">Retire selectively</span></td><td class="soft">Retire where SNIP provides controlled intake, correction, analysis or reporting.</td></tr>
+                <tr><td><strong>SharePoint</strong></td><td><span class="pill pill-grey">Retain or retire by use case</span></td><td class="soft">Keep intentional document management, not compensating workflow.</td></tr>
+                <tr><td><strong>Microsoft Forms</strong></td><td><span class="pill pill-grey">Retire where replaced</span></td><td class="soft">Avoid parallel submission channels after governed workflow is established.</td></tr>
+                <tr><td><strong>Teams</strong></td><td><span class="pill pill-grey">Retain for collaboration</span></td><td class="soft">Do not use Teams as the authoritative decision or approval record.</td></tr>
+                <tr><td><strong>Traffic forecasting</strong></td><td><span class="pill pill-grey">Confirm source &amp; ownership</span></td><td class="soft">Establish the authoritative source, owner and integration method.</td></tr>
+                <tr><td><strong>Network modelling</strong></td><td><span class="pill pill-grey">Confirm source &amp; ownership</span></td><td class="soft">Establish the authoritative source, owner and integration method.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">12. Delivery Roadmap</div>
+          <div class="flow-track">
+            <div class="flow-step open">
+              <div class="rail"><div class="dot">0</div><div class="line"></div></div>
+              <div class="content">
+                <button class="step-head"><div><div class="step-title">Evidence and mobilisation</div><div class="step-meta">Close the evidence gaps required for investment approval and controlled delivery</div></div><div class="chev">&rsaquo;</div></button>
+                <div class="step-body">
+                  <p style="margin-bottom:6px;"><strong>Scope:</strong> confirm sponsor, economic buyer, business owner and service owner &middot; validate effort, labour rate and benefits baseline &middot; map the cycle and document validation rules &middot; confirm KPI granularity, data owners and unknown source systems &middot; define pilot, TCO, operating model and stop conditions.</p>
+                  <p style="margin:0;"><strong>Gate:</strong> approved scope and investment &middot; named benefit owners &middot; accepted service ownership &middot; agreed architecture and controls.</p>
+                </div>
+              </div>
+            </div>
+            <div class="flow-step open">
+              <div class="rail"><div class="dot">1</div><div class="line"></div></div>
+              <div class="content">
+                <button class="step-head"><div><div class="step-title">Governed Foundation</div><div class="step-meta">Create the minimum governed capability delivering control, traceability and efficiency</div></div><div class="chev">&rsaquo;</div></button>
+                <div class="step-body">
+                  <p style="margin-bottom:6px;"><strong>Scope:</strong> governed intake and blocking validation &middot; controlled exceptions and KPI catalogue &middot; conformed dimensions and initial plan object &middot; history, version control and target-versus-actual reporting &middot; self-service, report generation and service transition.</p>
+                  <p style="margin:0;"><strong>Gate:</strong> pilot reconciles to approved outputs &middot; quality threshold met &middot; manual effort reduced against baseline &middot; support readiness demonstrated &middot; no critical control findings.</p>
+                </div>
+              </div>
+            </div>
+            <div class="flow-step open">
+              <div class="rail"><div class="dot">2</div><div class="line"></div></div>
+              <div class="content">
+                <button class="step-head"><div><div class="step-title">Financial Harmony and Intelligence</div><div class="step-meta">Connect technical and financial planning and introduce controlled intelligence</div></div><div class="chev">&rsaquo;</div></button>
+                <div class="step-body">
+                  <p style="margin:0;"><strong>Scope:</strong> replace BPT capabilities with SNIP financial planning and governance workflows &middot; integrate eligible NGDI actuals &middot; forecasting and target credibility.</p>
+                </div>
+              </div>
+            </div>
+            <div class="flow-step open">
+              <div class="rail"><div class="dot">3</div><div class="line"></div></div>
+              <div class="content">
+                <button class="step-head"><div><div class="step-title">Execution Closure</div><div class="step-meta">Connect the approved plan with funding, delivery and realised outcomes</div></div><div class="chev">&rsaquo;</div></button>
+                <div class="step-body">
+                  <p style="margin-bottom:6px;"><strong>Scope:</strong> consume SAP WBS and financial actuals &middot; replace PPM delivery-management capability with SNIP programme execution and status tracking &middot; complete planned-to-built traceability &middot; enable cost-per-outcome analysis.</p>
+                  <p style="margin:0;"><strong>Gate:</strong> named co-sponsors &middot; approved access and identity mapping &middot; data-quality thresholds met &middot; value justifies integration cost.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">13. Investment and Five-Year TCO</div>
+          <div class="grid grid-2">
+            <div class="feature-card">
+              <h3>13.1 Phase 1 investment</h3>
+              <ul class="doc-list" style="margin-top:6px;"><li>Product management and business analysis</li><li>Process and data design</li><li>Solution and security architecture</li><li>Development or configuration</li><li>Data migration and testing</li><li>Pilot delivery and market onboarding</li><li>Training, documentation and service transition</li><li>Decommissioning and contingency</li></ul>
+            </div>
+            <div class="feature-card">
+              <h3>13.2 Recurring operating cost</h3>
+              <ul class="doc-list" style="margin-top:6px;"><li>Product and service ownership</li><li>Application support and data operations</li><li>Cloud consumption and licences</li><li>KPI catalogue governance</li><li>Release management and user support</li><li>Control assurance and audit</li><li>Model monitoring and refresh in later phases</li><li>Business continuity and knowledge management</li></ul>
+            </div>
+          </div>
+          <div class="snip-sub-label" style="margin-top:16px;">13.3 TCO scenarios</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Scenario</th><th>5-year investment</th><th>5-year run cost</th><th>Benefits</th><th>Residual limitations</th></tr></thead>
+              <tbody>
+                <tr><td>Continue current approach</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">High</td></tr>
+                <tr><td>Technical migration only</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">High</td></tr>
+                <tr><td>KPI replacement only</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">Medium</td></tr>
+                <tr><td>SNIP Foundation</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">Controlled</td></tr>
+                <tr><td>Complete SNIP</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">&euro;[ ]</td><td class="soft">Lowest, subject to scope discipline</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:10px; font-size:.82rem;">All scenarios should use consistent assumptions for inflation, internal and external labour, contingency, cloud consumption, support, licences, benefit timing, discounting and residual risk.</p>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">14. Operating Model</div>
+          <p>SNIP must not replace the current dependency with a new single-person dependency.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Accountability</th><th>Proposed owner</th></tr></thead>
+              <tbody>
+                <tr><td>Executive sponsor</td><td class="soft">[Name and role]</td></tr>
+                <tr><td>Economic buyer</td><td class="soft">[Name and role]</td></tr>
+                <tr><td>Business capability owner</td><td class="soft">[Name and role]</td></tr>
+                <tr><td>Product owner</td><td class="soft">[Name and role]</td></tr>
+                <tr><td>Service owner</td><td class="soft">[Name and role]</td></tr>
+                <tr><td>KPI catalogue governance</td><td class="soft">[Forum or role]</td></tr>
+                <tr><td>Market planning data</td><td class="soft">Market planning leads</td></tr>
+                <tr><td>Financial planning data in SNIP</td><td class="soft">[Finance or SNIP financial planning owner]</td></tr>
+                <tr><td>Delivery data in SNIP</td><td class="soft">[SNIP delivery-management owner]</td></tr>
+                <tr><td>SAP financial actuals</td><td class="soft">[Finance or SAP owner]</td></tr>
+                <tr><td>NGDI actuals</td><td class="soft">[NGDI owner]</td></tr>
+                <tr><td>Competitor data</td><td class="soft">[Data owner]</td></tr>
+                <tr><td>Platform operation</td><td class="soft">[Service team]</td></tr>
+                <tr><td>Application support</td><td class="soft">[Support team]</td></tr>
+                <tr><td>Model approval and monitoring</td><td class="soft">[Analytics or AI governance owner]</td></tr>
+                <tr><td>Recommendation acceptance</td><td class="soft">Named planning authority</td></tr>
+                <tr><td>Risk and control assurance</td><td class="soft">[Control owner]</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="grid grid-2" style="margin-top:14px;">
+            <div class="card">
+              <h3>14.1 Minimum operating controls</h3>
+              <ul class="doc-list" style="margin-top:6px; margin-bottom:0;"><li>Named accountability and trained backup coverage</li><li>Documented procedures and service levels</li><li>Access and data-quality controls</li><li>Exception and release management</li><li>Business continuity and knowledge handover</li><li>Evidence retention and escalation routes</li></ul>
+            </div>
+            <div class="card">
+              <h3>14.2 Human accountability</h3>
+              <p style="margin:0;">SNIP may generate explanations, forecasts and recommendations. It must not independently approve financial commitment, change an authorised target, create a WBS, approve a CAR, amend an LRP or DB baseline, instruct delivery teams or accept its own recommendation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. RISKS & DECISION -->
+      <div class="gov-panel" data-panel="risks">
+        <div class="snip-sub">
+          <div class="snip-sub-label">15. Principal Risks and Mitigations</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Risk</th><th>Exposure</th><th>Mitigation</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Technology-led delivery</strong></td><td class="soft">A new interface or platform is delivered without changing planning governance.</td><td class="soft">Make the plan object, catalogue, ownership and decision history mandatory Phase 1 outcomes.</td></tr>
+                <tr><td><strong>Benefits overstated</strong></td><td class="soft">Effort assumptions are treated as confirmed savings.</td><td class="soft">Require signed baselines and separate cashable saving, capacity and strategic upside.</td></tr>
+                <tr><td><strong>Another disconnected platform</strong></td><td class="soft">SNIP stores data without maintaining identity across the cycle.</td><td class="soft">Make identifier continuity and SNIP-to-WBS mapping mandatory architecture.</td></tr>
+                <tr><td><strong>Scope expansion</strong></td><td class="soft">Phase 1 attempts to replace or integrate every system.</td><td class="soft">Protect the phased replacement scope: OHP in Phase 1, BPT in Phase 2, PPM in Phase 3, using explicit migration and retirement gates.</td></tr>
+                <tr><td><strong>Incomparable history</strong></td><td class="soft">KPI changes invalidate trends or forecasts.</td><td class="soft">Record effective dates, calculation versions, lineage and mapping rules.</td></tr>
+                <tr><td><strong>External dependency delay</strong></td><td class="soft">Later systems block initial value.</td><td class="soft">Ensure Phase 1 can deliver independently and gate each integration.</td></tr>
+                <tr><td><strong>Premature model use</strong></td><td class="soft">Forecasts appear credible without evidence.</td><td class="soft">Require baseline comparison, thresholds, limitations and human review.</td></tr>
+                <tr><td><strong>Inconsistent external comparison</strong></td><td class="soft">Competitor information is not comparable.</td><td class="soft">Apply source, definition, granularity and confidence controls.</td></tr>
+                <tr><td><strong>Unresolved run ownership</strong></td><td class="soft">SNIP depends on a small number of individuals.</td><td class="soft">Approve run model, documentation, support coverage and succession in Phase 1.</td></tr>
+                <tr><td><strong>Parallel processes continue</strong></td><td class="soft">Markets retain spreadsheets or forms alongside SNIP.</td><td class="soft">Define retirement criteria and monitor adoption.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">16. Measures of Success</div>
+          <div class="grid grid-2">
+            <div class="feature-card"><h3>Control</h3><ul class="doc-list" style="margin-top:6px;"><li>% of in-scope KPIs in the governed catalogue</li><li>% with named owners and approved definitions</li><li>Open exceptions and their age</li><li>% of material changes with reason and approval</li><li>Critical undocumented rules or dependencies remaining</li></ul></div>
+            <div class="feature-card"><h3>Efficiency</h3><ul class="doc-list" style="margin-top:6px;"><li>Market submission and central validation effort</li></ul></div>
+            <div class="feature-card"><h3>Traceability</h3><ul class="doc-list" style="margin-top:6px;"><li>% with complete planning identity</li><li>% of technical targets linked to financial commitment</li><li>% of planning identifiers mapped to WBS</li><li>% of funded programmes linked to delivery status</li><li>% of outcomes linked to actual performance</li></ul></div>
+            <div class="feature-card"><h3>Intelligence</h3><ul class="doc-list" style="margin-top:6px;"><li>Forecast error against baseline</li><li>% within accepted confidence range</li><li>Planner acceptance and correction of explanations</li><li>Time from emerging variance to action</li><li>Recommendation decisions and outcomes</li></ul></div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <h3>Adoption and service</h3>
+            <ul class="doc-list" style="margin-top:6px; column-count:2; column-gap:24px; margin-bottom:0;"><li>Active users by market</li><li>Pilot completion in SNIP</li><li>Training completion and satisfaction</li><li>Support incidents and availability</li><li>Parallel processes remaining</li></ul>
+          </div>
+          <p style="margin-top:10px; font-size:.82rem;">Every measure requires a baseline, target, accountable owner, data source, calculation method, reporting frequency and approval authority.</p>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">17. Delivery Gates and Stop Conditions</div>
+          <div class="grid grid-3">
+            <div class="card"><h3>17.1 Phase 1 gate</h3><ul class="doc-list" style="margin-top:6px; margin-bottom:0;"><li>Pilot reconciles with approved outputs</li><li>Data ownership is accepted</li><li>Validation operates effectively</li><li>Initial plan identity works</li><li>Operating model is ready</li><li>Benefits remain proportionate to investment</li><li>No critical control issue remains unresolved</li></ul></div>
+            <div class="card"><h3>17.2 Phase 2 gate</h3><ul class="doc-list" style="margin-top:6px; margin-bottom:0;"><li>Sufficient governed history exists</li><li>Forecast performance exceeds the agreed baseline</li><li>Model inputs are traceable</li><li>Planners can challenge explanations</li><li>Human validation is operational</li><li>BPT replacement produces measurable value and the legacy platform is ready for retirement</li></ul></div>
+            <div class="card"><h3>17.3 Phase 3 gate</h3><ul class="doc-list" style="margin-top:6px; margin-bottom:0;"><li>Ownership is agreed</li><li>Identity mapping is feasible</li><li>Data access is approved</li><li>Data quality meets threshold</li><li>Expected traceability value justifies cost</li></ul></div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <h3>17.4 Stop or redirect conditions</h3>
+            <ul class="doc-list" style="margin-top:6px; column-count:2; column-gap:24px; margin-bottom:0;">
+              <li>Outputs cannot be reconciled</li><li>Required ownership is not accepted</li><li>Critical identity mapping cannot be established</li><li>Validated benefits do not support cost</li><li>Run ownership remains unresolved</li><li>Security or privacy controls cannot be satisfied</li><li>Forecasting does not outperform its comparator</li><li>Integration cost exceeds value</li><li>Adoption remains below threshold</li><li>Parallel processes cannot be retired</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">18. Decision Requested</div>
+          <div class="grid grid-2">
+            <div class="feature-card"><h3>18.1 Approve</h3><p style="margin:0;">Approve &euro;[amount] for Phase 1 of SNIP, funded from [budget line] in [period].</p></div>
+            <div class="feature-card"><h3>18.2 Endorse</h3><p style="margin:0;">Endorse SNIP as the strategic direction for connecting network ambition, financial commitment, delivery and realised outcomes.</p></div>
+            <div class="feature-card">
+              <h3>18.3 Confirm ownership</h3>
+              <ul class="doc-list" style="margin-top:6px; margin-bottom:0;"><li>[Name] as executive sponsor</li><li>[Name] as economic buyer</li><li>[Name] as business owner</li><li>[Name or function] as future service owner</li><li>[Forum or role] as KPI governance owner</li></ul>
+            </div>
+            <div class="feature-card">
+              <h3>18.4 Confirm Phase 1 scope</h3>
+              <ul class="doc-list" style="margin-top:6px; margin-bottom:0;"><li>50-KPI pilot</li><li>Controlled intake and validation capability</li><li>KPI catalogue</li><li>Initial plan object and version history</li><li>Target-versus-actual reporting and self-service analysis</li><li>Operating-model implementation</li><li>Replacement and retirement plan for OHP, including controlled migration into SNIP</li></ul>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <h3>18.5 Confirm the gate</h3>
+            <p style="margin:0;">Approve the Phase 1 success criteria, stop conditions and next investment decision point on [date].</p>
+          </div>
+        </div>
+
+        <div class="snip-sub">
+          <div class="snip-sub-label">Closing Recommendation</div>
+          <p>Vodafone&rsquo;s network planning cycle makes strategic, financial and delivery decisions across NEP, LRP, DB, CAR and monthly performance management. The process is well established, but its underlying evidence remains fragmented across stages, identities and systems. SNIP addresses this structural gap by creating one governed planning capability. Phase 1 delivers immediate value through controlled intake, validation at source, consistent KPI definitions, governed history, reduced manual assembly and improved self-service.</p>
+          <p>Later phases build on that foundation to connect cost, funding, delivery and realised outcomes, while introducing forecasting, benchmarking, variance explanation and evidence-based recommendations. Intelligence must be earned through governed data, demonstrated accuracy and human accountability.</p>
+          <div class="callout">Approve Phase 1 of SNIP to establish the governed planning foundation connecting Vodafone&rsquo;s network ambition, investment decisions and realised outcomes.</div>
+        </div>
+      </div>
+    </section>
+
     </main>
 </div>
 
@@ -1120,6 +1669,7 @@ tbody tr:hover{background:#fafafa!important;}
 
 const NAV = [
   { id:"home", label:"Home" },
+  { id:"snip", label:"What's SNIP" },
 ];
 
 const STATS = [
@@ -2693,6 +3243,32 @@ function buildTimeline(){
     </div>`;
 }
 
+/* --- What's SNIP: sub-tabs --- */
+const SNIP_TABS = [
+  { key:"overview", label:"Overview" },
+  { key:"change", label:"The Change" },
+  { key:"value", label:"Value & Options" },
+  { key:"delivery", label:"Delivery" },
+  { key:"risks", label:"Risks & Decision" },
+];
+function buildSnipTabs(){
+  const tabs = document.getElementById('snipTabs');
+  if(!tabs) return;
+  SNIP_TABS.forEach((t,i)=>{
+    const btn = el('button','tab-btn'+(i===0?' active':''), t.label);
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#snipTabs .tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('#sec-snip .gov-panel').forEach(p=> p.classList.toggle('active', p.dataset.panel===t.key));
+      window.scrollTo({top:0});
+    });
+    tabs.appendChild(btn);
+  });
+  document.querySelectorAll('#sec-snip .flow-step .step-head').forEach(head=>{
+    head.addEventListener('click', ()=> head.closest('.flow-step').classList.toggle('open'));
+  });
+}
+
 /* --- Modal wiring --- */
 document.getElementById('modalClose').addEventListener('click', closeModal);
 document.getElementById('modalBackdrop').addEventListener('click', e=>{ if(e.target.id==='modalBackdrop') closeModal(); });
@@ -2704,6 +3280,7 @@ buildTimeline();
 buildLegend();
 initNepVersionSwitch();
 buildCycles();
+buildSnipTabs();
 goTo('home');
 </script>
 </body>
